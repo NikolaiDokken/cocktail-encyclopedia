@@ -1,5 +1,6 @@
 {
   "name": "cocktail_encyclopedia",
+  "homepage": "https://nikolaidokken.github.io/cocktail-encyclopedia/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
