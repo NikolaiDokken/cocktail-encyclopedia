@@ -7,13 +7,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Build
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Build and deploy
         run: |
+          cd client
           npm install
-          npm run build
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          BRANCH: gh-pages
-          FOLDER: build
+          npm run deploy

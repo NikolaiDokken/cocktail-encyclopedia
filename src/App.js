@@ -39,13 +39,13 @@ export default function App() {
 const styles = {
     app: {
         textAlign: "center",
-        backgroundColor: "#040d20",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         fontSize: "calc(10px + 2vmin)",
-        color: "white"
+        color: "white",
+        justifyContent: "center"
     },
     header: {
         display: "flex",
@@ -75,5 +75,6 @@ const styles = {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-evenly",
+        padding: "0 16px 0 16px"
     }
 }

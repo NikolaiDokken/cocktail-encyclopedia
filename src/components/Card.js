@@ -2,13 +2,14 @@
 
 const styles = {
     container: {
-        width: 200,
+        flexGrow: 1,
+        minWidth: 200,
+        maxWidth: 350,
         height: 400,
-        borderRadius: 8,
         backgroundColor: "#fad7e2",
         overflowY: "hidden",
         overflowX: "hidden",
-        marginBottom: 16
+        margin: "0 8px 16px 8px"
     },
     imageContainer: {
         display: "flex",
@@ -21,13 +22,12 @@ const styles = {
         width: "100%"
     },
     drinkTitle: {
-        color: "black",
         textTransform: "uppercase",
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        backgroundColor: "inherit"
     }
 }
-
 
 export default function Card(props) {
     const {drink} = props;
@@ -37,8 +37,7 @@ export default function Card(props) {
         <div style={styles.imageContainer}>
             <img style={styles.image} src={drink.strDrinkThumb + "/preview"} alt="preview"/>
         </div>
-        <div style={styles.drinkTitle}>{drink.strDrink}</div>
-        
+        <p style={styles.drinkTitle}>{drink.strDrink}</p>
     </div>
     );
 }
