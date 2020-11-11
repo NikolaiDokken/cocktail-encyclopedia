@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/cocktail-encyclopedia/static/css/main.6820285d.chunk.css",
-    "main.js": "/cocktail-encyclopedia/static/js/main.28dadfaf.chunk.js",
-    "main.js.map": "/cocktail-encyclopedia/static/js/main.28dadfaf.chunk.js.map",
+    "main.css": "/cocktail-encyclopedia/static/css/main.9c50ab21.chunk.css",
+    "main.js": "/cocktail-encyclopedia/static/js/main.ade61530.chunk.js",
+    "main.js.map": "/cocktail-encyclopedia/static/js/main.ade61530.chunk.js.map",
     "runtime-main.js": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js",
     "runtime-main.js.map": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js.map",
     "static/js/2.70f2f13c.chunk.js": "/cocktail-encyclopedia/static/js/2.70f2f13c.chunk.js",
     "static/js/2.70f2f13c.chunk.js.map": "/cocktail-encyclopedia/static/js/2.70f2f13c.chunk.js.map",
     "index.html": "/cocktail-encyclopedia/index.html",
-    "static/css/main.6820285d.chunk.css.map": "/cocktail-encyclopedia/static/css/main.6820285d.chunk.css.map",
+    "static/css/main.9c50ab21.chunk.css.map": "/cocktail-encyclopedia/static/css/main.9c50ab21.chunk.css.map",
     "static/js/2.70f2f13c.chunk.js.LICENSE.txt": "/cocktail-encyclopedia/static/js/2.70f2f13c.chunk.js.LICENSE.txt",
     "static/media/logo.81424971.svg": "/cocktail-encyclopedia/static/media/logo.81424971.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.96aa3519.js",
     "static/js/2.70f2f13c.chunk.js",
-    "static/css/main.6820285d.chunk.css",
-    "static/js/main.28dadfaf.chunk.js"
+    "static/css/main.9c50ab21.chunk.css",
+    "static/js/main.ade61530.chunk.js"
   ]
 }
