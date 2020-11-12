@@ -9,14 +9,16 @@ export default function App() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (searchQuery.length > 2) {
+        if (searchQuery.length > 0) {
             CocktailService.getCocktailByName(searchQuery).then(response => {
                 if (response.data.drinks) {
                     setDrinks(response.data.drinks);
                 }
             })
         } else {
-            setDrinks([]);
+            CocktailService.getRandomCocktail().then(response => {
+                setDrinks(response.data.drinks);
+            })
         }
     }, [searchQuery]);
 
@@ -27,6 +29,7 @@ export default function App() {
             The Cocktail Encyclopedia
         </div>
         <input style={styles.searchBar} value={searchQuery} placeholder="Search for drink or ingredient" onChange={(e) => setSearchQuery(e.target.value)} />
+        {searchQuery.length === 0?<div>Have you tried...</div>:""}
         <div style={styles.cardContainer}>
             {drinks.map((drink, index) => 
             <Card drink={drink} key={index} /> 
@@ -38,7 +41,6 @@ export default function App() {
 
 const styles = {
     app: {
-        textAlign: "center",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -50,6 +52,8 @@ const styles = {
     header: {
         display: "flex",
         flexDirection: "row",
+        alignSelf: "stretch",
+        justifyContent: "center",
         alignItems: "center",
         padding: 8
     },
@@ -63,7 +67,7 @@ const styles = {
         borderBottom: "4px solid white",
         height: 32,
         width: 300,
-        backgroundColor: "#040d20",
+        backgroundColor: "inherit",
         marginTop: 16,
         fontSize: 20,
         color: "white",
