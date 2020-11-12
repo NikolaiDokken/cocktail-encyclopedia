@@ -1,5 +1,3 @@
-
-
 const styles = {
     container: {
         flexGrow: 1,
@@ -41,14 +39,23 @@ export default function Card(props) {
 
     const getIngredients = (drink) => {
         var ingredients = [];
-        var i = 1;
-        while(eval("drink.strIngredient" + i) !== null && eval("drink.strIngredient" + i) !== "") {
-            ingredients.push(eval("drink.strMeasure" + i) + " " + eval("drink.strIngredient" + i));
-            i++;
-        }
+        if (drink.strIngredient1) ingredients.push(drink.strMeasure1 + " "+ drink.strIngredient1);
+        if (drink.strIngredient2) ingredients.push(drink.strMeasure2 + " " +drink.strIngredient2);
+        if (drink.strIngredient3) ingredients.push(drink.strMeasure3 + " " +drink.strIngredient3);
+        if (drink.strIngredient4) ingredients.push(drink.strMeasure4 + " " +drink.strIngredient4);
+        if (drink.strIngredient5) ingredients.push(drink.strMeasure5 + " " +drink.strIngredient5);
+        if (drink.strIngredient6) ingredients.push(drink.strMeasure6 + " " +drink.strIngredient6);
+        if (drink.strIngredient7) ingredients.push(drink.strMeasure7 + " " +drink.strIngredient7);
+        if (drink.strIngredient8) ingredients.push(drink.strMeasure8 + " " +drink.strIngredient8);
+        if (drink.strIngredient9) ingredients.push(drink.strMeasure9 + " " +drink.strIngredient9);
+        if (drink.strIngredient10) ingredients.push(drink.strMeasure10 + " " +drink.strIngredient10);
+        if (drink.strIngredient11) ingredients.push(drink.strMeasure11 + " " +drink.strIngredient11);
+        if (drink.strIngredient12) ingredients.push(drink.strMeasure12 + " " +drink.strIngredient12);
+        if (drink.strIngredient13) ingredients.push(drink.strMeasure13 + " " +drink.strIngredient13);
+        if (drink.strIngredient14) ingredients.push(drink.strMeasure14 + " " +drink.strIngredient14);
+        if (drink.strIngredient15) ingredients.push(drink.strMeasure15 + " " +drink.strIngredient15);
         return ingredients;
     }
-    console.log(drink)
     getIngredients(drink);
     return (
     <div style={styles.container}>
