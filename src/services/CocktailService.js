@@ -3,11 +3,19 @@ const url = "https://www.thecocktaildb.com/api/json/v1/1";
 
 class CocktailService {
     getCocktailByName(searchQuery) {
-        return axios.get(url + "/search.php?s=" + searchQuery)
+        return axios.get(url + "/search.php?s=" + searchQuery);
     }
-    
+
+    getCocktailByIngredient(searchQuery) {
+        return axios.get(url + "/filter.php?i=" + searchQuery);
+    }
+
     getRandomCocktail() {
-        return axios.get(url + "/random.php")
+        return axios.get(url + "/random.php");
+    }
+
+    getCocktailById(id) {
+        return axios.get(url + "/lookup.php?i=" + id);
     }
 }
 
