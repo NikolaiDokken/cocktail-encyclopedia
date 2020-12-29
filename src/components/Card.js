@@ -17,6 +17,7 @@ const styles = {
         backgroundColor: "#4ba8d6",
         margin: "0 8px 16px 8px",
         borderRadius: 8,
+        height: 225,
     },
     image: {
         objectFit: "cover",
@@ -31,8 +32,8 @@ const styles = {
         padding: 8,
     },
     drinkTitle: {
-        height: 20,
-        lineHeight: 20,
+        display: "flex",
+        justifyContent: "center",
         fontSize: 18,
         fontWeight: "bold",
     },
