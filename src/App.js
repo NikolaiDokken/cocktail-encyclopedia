@@ -19,6 +19,8 @@ export default function App() {
                         (response) => {
                             if (response.data.drinks) {
                                 setDrinks(response.data.drinks);
+                            } else {
+                                setDrinks([]);
                             }
                         }
                     );
@@ -28,6 +30,8 @@ export default function App() {
                         (response) => {
                             if (response.data.drinks) {
                                 setDrinks(response.data.drinks);
+                            } else {
+                                setDrinks([]);
                             }
                         }
                     );
@@ -109,6 +113,7 @@ export default function App() {
                     <Card drink={drink} key={index} />
                 ))}
             </div>
+            {drinks.length === 0 ? <div>No search results</div> : ""}
         </div>
     );
 }
