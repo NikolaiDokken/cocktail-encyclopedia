@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/cocktail-encyclopedia/static/css/main.3f309300.chunk.css",
-    "main.js": "/cocktail-encyclopedia/static/js/main.16ce09e0.chunk.js",
-    "main.js.map": "/cocktail-encyclopedia/static/js/main.16ce09e0.chunk.js.map",
+    "main.css": "/cocktail-encyclopedia/static/css/main.6a3e7bcf.chunk.css",
+    "main.js": "/cocktail-encyclopedia/static/js/main.2bbc0a04.chunk.js",
+    "main.js.map": "/cocktail-encyclopedia/static/js/main.2bbc0a04.chunk.js.map",
     "runtime-main.js": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js",
     "runtime-main.js.map": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js.map",
-    "static/js/2.7188bf3e.chunk.js": "/cocktail-encyclopedia/static/js/2.7188bf3e.chunk.js",
-    "static/js/2.7188bf3e.chunk.js.map": "/cocktail-encyclopedia/static/js/2.7188bf3e.chunk.js.map",
+    "static/js/2.929be44b.chunk.js": "/cocktail-encyclopedia/static/js/2.929be44b.chunk.js",
+    "static/js/2.929be44b.chunk.js.map": "/cocktail-encyclopedia/static/js/2.929be44b.chunk.js.map",
     "index.html": "/cocktail-encyclopedia/index.html",
-    "static/css/main.3f309300.chunk.css.map": "/cocktail-encyclopedia/static/css/main.3f309300.chunk.css.map",
-    "static/js/2.7188bf3e.chunk.js.LICENSE.txt": "/cocktail-encyclopedia/static/js/2.7188bf3e.chunk.js.LICENSE.txt",
+    "static/css/main.6a3e7bcf.chunk.css.map": "/cocktail-encyclopedia/static/css/main.6a3e7bcf.chunk.css.map",
+    "static/js/2.929be44b.chunk.js.LICENSE.txt": "/cocktail-encyclopedia/static/js/2.929be44b.chunk.js.LICENSE.txt",
     "static/media/logo.81424971.svg": "/cocktail-encyclopedia/static/media/logo.81424971.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.96aa3519.js",
-    "static/js/2.7188bf3e.chunk.js",
-    "static/css/main.3f309300.chunk.css",
-    "static/js/main.16ce09e0.chunk.js"
+    "static/js/2.929be44b.chunk.js",
+    "static/css/main.6a3e7bcf.chunk.css",
+    "static/js/main.2bbc0a04.chunk.js"
   ]
 }
