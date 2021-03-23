@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/cocktail-encyclopedia/static/css/main.6a3e7bcf.chunk.css",
-    "main.js": "/cocktail-encyclopedia/static/js/main.2bbc0a04.chunk.js",
-    "main.js.map": "/cocktail-encyclopedia/static/js/main.2bbc0a04.chunk.js.map",
+    "main.js": "/cocktail-encyclopedia/static/js/main.8291a0c0.chunk.js",
+    "main.js.map": "/cocktail-encyclopedia/static/js/main.8291a0c0.chunk.js.map",
     "runtime-main.js": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js",
     "runtime-main.js.map": "/cocktail-encyclopedia/static/js/runtime-main.96aa3519.js.map",
     "static/js/2.929be44b.chunk.js": "/cocktail-encyclopedia/static/js/2.929be44b.chunk.js",
@@ -16,6 +16,6 @@
     "static/js/runtime-main.96aa3519.js",
     "static/js/2.929be44b.chunk.js",
     "static/css/main.6a3e7bcf.chunk.css",
-    "static/js/main.2bbc0a04.chunk.js"
+    "static/js/main.8291a0c0.chunk.js"
   ]
 }
