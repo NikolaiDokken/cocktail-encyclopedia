@@ -84,6 +84,7 @@ export default function Home() {
 			<TextField
 				value={searchQuery}
 				onChange={handleChangeSearch}
+				onKeyDown={(e) => (e.key === "Enter" ? handleSearch() : null)}
 				placeholder="Tequila sunrise, lime, tonic"
 				color="primary"
 				variant="outlined"
@@ -105,7 +106,7 @@ export default function Home() {
 			) : (
 				""
 			)}
-			<Container>
+			<Container style={{ marginTop: hasSearched ? 40 : 0 }}>
 				<Grid
 					container
 					spacing={2}
