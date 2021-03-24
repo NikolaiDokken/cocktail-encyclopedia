@@ -1,4 +1,3 @@
-import logo from "../logo.svg";
 import "../App.css";
 import { useEffect, useState } from "react";
 import CocktailService from "../services/CocktailService";
@@ -9,7 +8,6 @@ import {
 	InputAdornment,
 	IconButton,
 	Grid,
-	Hidden,
 	Container,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
@@ -21,14 +19,44 @@ export default function Home() {
 
 	const handleSearch = () => {
 		if (searchQuery.length > 0) {
+			const cocktailsByName = CocktailService.getCocktailByName(
+				searchQuery
+			);
+			const cocktailsByIngredient = CocktailService.getCocktailByIngredient(
+				searchQuery
+			);
+
+			Promise.all([cocktailsByName, cocktailsByIngredient]).then(
+				(results) => {
+					var drinksName = results[0].data.drinks || [];
+					const drinksIngredient = results[1].data.drinks || [];
+					if (drinksName.length > 0 || drinksIngredient.length > 0) {
+						drinksIngredient.forEach((drinkIng) => {
+							if (
+								!drinksName.find(
+									(drinkName) =>
+										drinkName.idDrink === drinkIng.idDrink
+								)
+							) {
+								drinksName.push(drinkIng);
+							}
+						});
+						setDrinks(drinksName);
+					} else {
+						setDrinks([]);
+					}
+					setHasSearched(true);
+				}
+			);
+
+			/*
 			CocktailService.getCocktailByName(searchQuery).then((response) => {
 				if (response.data.drinks) {
 					setDrinks(response.data.drinks);
 				} else {
-					setDrinks([]);
 				}
 			});
-			setHasSearched(true);
+			*/
 		} else {
 			setHasSearched(false);
 		}
@@ -59,28 +87,17 @@ export default function Home() {
 
 	return (
 		<div style={styles.container}>
-			<Grid
-				container
-				justify="center"
-				alignItems="center"
-				style={{ marginTop: 60 }}
+			<div
+				onClick={() => {
+					setSearchQuery("");
+					setHasSearched(false);
+				}}
+				style={{ cursor: "pointer" }}
 			>
-				<Hidden smDown>
-					<Grid item>
-						<img
-							src={logo}
-							style={styles.appLogo}
-							className="App-logo"
-							alt="logo"
-						/>
-					</Grid>
-				</Hidden>
-				<Grid item>
-					<Typography variant="h2" align="center">
-						The Cocktail Encyclopedia
-					</Typography>
-				</Grid>
-			</Grid>
+				<Typography variant="h2" align="center">
+					The Cocktail Encyclopedia
+				</Typography>
+			</div>
 			<TextField
 				value={searchQuery}
 				onChange={handleChangeSearch}
@@ -97,13 +114,17 @@ export default function Home() {
 						</InputAdornment>
 					),
 				}}
-				style={{ marginTop: !hasSearched ? 50 : 20 }}
+				style={{
+					marginTop: !hasSearched ? 50 : 20,
+					maxWidth: "80%",
+					width: 600,
+				}}
 			/>
 			{!hasSearched ? (
 				<Typography
 					variant="h5"
 					align="center"
-					style={{ marginTop: 40 }}
+					style={{ marginTop: 40, marginBottom: 20 }}
 				>
 					Have you tried...
 				</Typography>
@@ -141,10 +162,10 @@ export default function Home() {
 
 const styles = {
 	container: {
-		minHeight: "100vh",
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
+		paddingTop: 60,
 	},
 	appLogo: {
 		height: "9vmin",
