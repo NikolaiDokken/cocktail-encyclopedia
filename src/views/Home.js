@@ -2,7 +2,7 @@ import logo from "../logo.svg";
 import "../App.css";
 import { useEffect, useState } from "react";
 import CocktailService from "../services/CocktailService";
-import Card from "../components/Card";
+import CocktailCard from "../components/CocktailCard";
 import {
 	TextField,
 	Typography,
@@ -97,10 +97,14 @@ export default function Home() {
 						</InputAdornment>
 					),
 				}}
-				style={{ marginTop: !hasSearched ? 100 : 20 }}
+				style={{ marginTop: !hasSearched ? 50 : 20 }}
 			/>
 			{!hasSearched ? (
-				<Typography variant="h5" style={{ marginTop: 40 }}>
+				<Typography
+					variant="h5"
+					align="center"
+					style={{ marginTop: 40 }}
+				>
 					Have you tried...
 				</Typography>
 			) : (
@@ -113,8 +117,15 @@ export default function Home() {
 					justify={hasSearched ? "flex-start" : "center"}
 				>
 					{drinks.map((drink, index) => (
-						<Grid item xs={12} sm={6} md={4} lg={3}>
-							<Card drink={drink} key={index} />
+						<Grid
+							item
+							xs={12}
+							sm={6}
+							md={4}
+							lg={3}
+							key={drink.idDrink}
+						>
+							<CocktailCard drinkId={drink.idDrink} key={index} />
 						</Grid>
 					))}
 				</Grid>
