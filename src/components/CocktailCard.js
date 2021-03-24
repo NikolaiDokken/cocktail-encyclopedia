@@ -167,30 +167,3 @@ export default function CocktailCard({ drinkId }) {
 		</Card>
 	);
 }
-
-/*
-<ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
-			<div onClick={flip} style={styles.containerFront}>
-				<img
-					style={styles.image}
-					src={drink.strDrinkThumb}
-					alt={drink.strDrink + "Preview"}
-				/>
-				<div style={styles.drinkTitle}>{drink.strDrink}</div>
-			</div>
-			<div onClick={flip} style={styles.containerBack}>
-				<div style={styles.descriptionContainer}>
-					<div style={styles.descriptionItem}>
-						<ul style={{ margin: 0, paddingLeft: 24 }}>
-							{getIngredients(drink).map((ingredient, index) => (
-								<li key={index}>{ingredient}</li>
-							))}
-						</ul>
-					</div>
-					<div style={styles.descriptionItem}>
-						{drink.strInstructions}
-					</div>
-				</div>
-			</div>
-		</ReactCardFlip>
-		*/
