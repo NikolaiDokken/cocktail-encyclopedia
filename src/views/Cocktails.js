@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CocktailService from "../services/CocktailService";
 import CocktailCard from "../components/CocktailCard";
-import { Box, TextField, Typography, InputAdornment, IconButton, Grid, Container } from "@mui/material";
+import { Box, TextField, Typography, InputAdornment, IconButton, Grid } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
@@ -119,48 +119,3 @@ export default function Cocktails() {
         </Box>
     );
 }
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingTop: 60,
-    },
-    appLogo: {
-        height: "9vmin",
-        pointerEvents: "none",
-        marginRight: 16,
-    },
-    searcTypeSelector: {
-        fontSize: 14,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    searchContainer: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    searchBar: {
-        borderRadius: 8,
-        border: "1px solid white",
-        height: 32,
-        width: 300,
-        backgroundColor: "inherit",
-        marginTop: 16,
-        fontSize: 20,
-        color: "white",
-        outline: "none",
-        marginBottom: 16,
-    },
-    cardContainer: {
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-evenly",
-        padding: "0 16px 0 16px",
-    },
-};
