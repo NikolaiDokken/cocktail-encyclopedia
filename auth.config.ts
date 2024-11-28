@@ -1,22 +1,27 @@
 import type { NextAuthConfig } from "next-auth";
 
-export const authConfig = {
+/**
+ * This file contains callback logic to handle
+ * custom logic after login/logout
+ */
+export const authConfig: NextAuthConfig = {
+  session: {
+    strategy: "jwt",
+  },
   pages: {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
-      return true;
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+    // Enrich the session object with additional user data (id, role, etc.)
+    async jwt(token, user) {
+      if (user) {
+        token.id = user.id;
       }
-      return true;
+      return token;
+    },
+    async session(session, token) {
+      session.user.id = token.id;
+      return session;
     },
   },
-  providers: [], // Add providers with an empty array for now
-} satisfies NextAuthConfig;
+};

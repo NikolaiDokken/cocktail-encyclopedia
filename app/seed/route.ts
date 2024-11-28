@@ -154,21 +154,15 @@ async function seedDrinks() {
       await Promise.all(
         drink.ingredients.map(async (ingredient) => {
           // Insert ingredient into ingredients table if it doesn't exist
-          console.log("BANAN ingre");
-
           await client.sql`
               INSERT INTO ingredients (name)
               VALUES (${ingredient.ingredient}) ON CONFLICT (name) DO NOTHING;
           `;
-          console.log("BANAN", ingredient.ingredient);
           const { rows: ingredientRows } = await client.sql`
               SELECT id FROM ingredients
-              WHERE name = '${ingredient.ingredient}' LIMIT 1;
+              WHERE name = ${ingredient.ingredient} LIMIT 1;
               `;
-          console.log("TEST", ingredientRows);
           const ingredientId = ingredientRows[0].id;
-
-          console.log("BANAN");
 
           // Insert into drink_ingredient table with quantity and unit
           await client.sql`
@@ -184,10 +178,10 @@ async function seedDrinks() {
 }
 
 export async function GET() {
-  // return Response.json({
-  //  message:
-  //    'Uncomment this file and remove this line. You can delete this file when you are finished.',
-  // });
+  return Response.json({
+    message:
+      "Uncomment this file and remove this line. You can delete this file when you are finished.",
+  });
   try {
     await client.sql`BEGIN`;
     // await seedUsers();
@@ -195,7 +189,7 @@ export async function GET() {
     // await seedInvoices();
     // await seedRevenue();
     // await seedIngredients();
-    await seedDrinks();
+    // await seedDrinks();
     await client.sql`COMMIT`;
 
     return Response.json({ message: "Database seeded successfully" });
