@@ -142,6 +142,7 @@ export default function CocktailCard({ drinkId }) {
 									<Typography
 										variant="body2"
 										color="textSecondary"
+										component="span"
 									>
 										{ingredient.measure
 											? ingredient.measure +

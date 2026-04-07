@@ -2,12 +2,12 @@ const axios = require("axios").default;
 const url = "https://www.thecocktaildb.com/api/json/v1/1";
 
 class CocktailService {
-    getCocktailByName(searchQuery) {
-        return axios.get(url + "/search.php?s=" + searchQuery);
+    getCocktailByName(searchQuery, signal) {
+        return axios.get(url + "/search.php?s=" + searchQuery, { signal });
     }
 
-    getCocktailByIngredient(searchQuery) {
-        return axios.get(url + "/filter.php?i=" + searchQuery);
+    getCocktailByIngredient(searchQuery, signal) {
+        return axios.get(url + "/filter.php?i=" + searchQuery, { signal });
     }
 
     getRandomCocktail() {
@@ -19,4 +19,5 @@ class CocktailService {
     }
 }
 
-export default new CocktailService();
+const cocktailService = new CocktailService();
+export default cocktailService;

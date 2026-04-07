@@ -1,5 +1,5 @@
 import "../App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CocktailService from "../services/CocktailService";
 import CocktailCard from "../components/CocktailCard";
 import {
@@ -16,20 +16,48 @@ export default function Home() {
 	const [drinks, setDrinks] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [hasSearched, setHasSearched] = useState(false);
+	const [error, setError] = useState(null);
+	const abortControllerRef = useRef(null);
 
 	const handleSearch = () => {
+		if (abortControllerRef.current) {
+			abortControllerRef.current.abort();
+		}
+		abortControllerRef.current = new AbortController();
+		setError(null);
+		const signal = abortControllerRef.current.signal;
+
 		if (searchQuery.length > 0) {
 			const cocktailsByName = CocktailService.getCocktailByName(
-				searchQuery
+				searchQuery, signal
 			);
 			const cocktailsByIngredient = CocktailService.getCocktailByIngredient(
-				searchQuery
+				searchQuery, signal
 			);
 
-			Promise.all([cocktailsByName, cocktailsByIngredient]).then(
+			Promise.allSettled([cocktailsByName, cocktailsByIngredient]).then(
 				(results) => {
-					var drinksName = results[0].data.drinks || [];
-					const drinksIngredient = results[1].data.drinks || [];
+					const rateLimited = results.some((r) => {
+						if (r.status === "rejected") {
+							return r.reason?.message === "Network Error" && !r.reason?.response;
+						}
+						if (r.status === "fulfilled") {
+							const drinks = r.value?.data?.drinks;
+							return typeof drinks === "string" && drinks.toLowerCase().includes("rate limit");
+						}
+						return false;
+					});
+
+					if (rateLimited) {
+						setError("Rate limit exceeded. Please wait a moment before searching again.");
+						return;
+					}
+
+					const nameResult = results[0].status === "fulfilled" ? results[0].value?.data?.drinks : null;
+					const ingredientResult = results[1].status === "fulfilled" ? results[1].value?.data?.drinks : null;
+					var drinksName = Array.isArray(nameResult) ? nameResult : [];
+					const drinksIngredient = Array.isArray(ingredientResult) ? ingredientResult : [];
+
 					if (drinksName.length > 0 || drinksIngredient.length > 0) {
 						drinksIngredient.forEach((drinkIng) => {
 							if (
@@ -49,35 +77,24 @@ export default function Home() {
 				}
 			);
 
-			/*
-			CocktailService.getCocktailByName(searchQuery).then((response) => {
-				if (response.data.drinks) {
-					setDrinks(response.data.drinks);
-				} else {
-				}
-			});
-			*/
 		} else {
 			setHasSearched(false);
 		}
-		/*
-            CocktailService.getCocktailByIngredient(searchQuery).then(
-                (response) => {
-                    if (response.data.drinks) {
-                        setDrinks(response.data.drinks);
-                    } else {
-                        setDrinks([]);
-                    }
-                }
-            );
-        */
 	};
 
 	useEffect(() => {
 		if (!hasSearched) {
-			CocktailService.getRandomCocktail().then((response) => {
-				setDrinks(response.data.drinks);
-			});
+			CocktailService.getRandomCocktail()
+				.then((response) => {
+					setDrinks(response.data.drinks);
+				})
+				.catch((err) => {
+					if (err.message === "Network Error" && !err.response) {
+						setError("Rate limit exceeded. Please wait a moment before searching again.");
+					} else {
+						console.error(err);
+					}
+				});
 		}
 	}, [hasSearched]);
 
@@ -105,6 +122,8 @@ export default function Home() {
 				placeholder="Tequila sunrise, lime, tonic"
 				color="primary"
 				variant="outlined"
+				error={!!error}
+				helperText={error}
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position="end">
@@ -151,10 +170,8 @@ export default function Home() {
 					))}
 				</Grid>
 			</Container>
-			{drinks.length === 0 ? (
+			{!error && drinks.length === 0 && (
 				<Typography>No search results</Typography>
-			) : (
-				""
 			)}
 		</div>
 	);
@@ -166,41 +183,5 @@ const styles = {
 		flexDirection: "column",
 		alignItems: "center",
 		paddingTop: 60,
-	},
-	appLogo: {
-		height: "9vmin",
-		pointerEvents: "none",
-		marginRight: 16,
-	},
-	searcTypeSelector: {
-		fontSize: 14,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	searchContainer: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	searchBar: {
-		borderRadius: 8,
-		border: "1px solid white",
-		height: 32,
-		width: 300,
-		backgroundColor: "inherit",
-		marginTop: 16,
-		fontSize: 20,
-		color: "white",
-		outline: "none",
-		marginBottom: 16,
-	},
-	cardContainer: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-evenly",
-		padding: "0 16px 0 16px",
 	},
 };
