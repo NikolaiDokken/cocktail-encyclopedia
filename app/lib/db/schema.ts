@@ -35,9 +35,6 @@ export const users = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    // Legacy bcrypt hash from NextAuth, copied to accounts.password.
-    // TODO: drop once the Better Auth release is deployed.
-    password: text(),
   },
   (table) => [unique("users_email_key").on(table.email)],
 );
