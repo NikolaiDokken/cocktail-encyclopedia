@@ -3,33 +3,39 @@ import { db } from "@/app/lib/db";
 import {
   drinkIngredient,
   drinks,
+  ingredientAliases,
   ingredients,
   likes,
 } from "@/app/lib/db/schema";
 
 const ITEMS_PER_PAGE = 10;
 
-// Drinks whose name or any ingredient contains the query. LIKE wildcards in
-// the query are escaped so "%" and "_" match literally.
+// Drinks whose name contains the query, or that use a matching ingredient.
+// An ingredient matches by name, including its sub-types (searching "whiskey"
+// finds Bourbon), or by alias. Aliases don't expand to sub-types, so the alias
+// "Bourbon or Rye Whiskey" doesn't make "bourbon" match rye drinks. LIKE
+// wildcards in the query are escaped so "%" and "_" match literally.
 function matchesQuery(query: string) {
   const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
   return or(
     ilike(drinks.name, pattern),
-    exists(
-      db
-        .select({ one: sql`1` })
-        .from(drinkIngredient)
-        .innerJoin(
-          ingredients,
-          eq(drinkIngredient.ingredientId, ingredients.id),
+    sql`exists (
+      with recursive matched (id) as (
+        select id from ${ingredients} where name ilike ${pattern}
+        union
+        select child.id from ${ingredients} child
+        join matched on child.parent_id = matched.id
+      )
+      select 1 from ${drinkIngredient} di
+      where di.drink_id = ${drinks.id}
+        and (
+          di.ingredient_id in (select id from matched)
+          or di.ingredient_id in (
+            select ingredient_id from ${ingredientAliases}
+            where alias ilike ${pattern}
+          )
         )
-        .where(
-          and(
-            eq(drinkIngredient.drinkId, drinks.id),
-            ilike(ingredients.name, pattern),
-          ),
-        ),
-    ),
+    )`,
   );
 }
 
