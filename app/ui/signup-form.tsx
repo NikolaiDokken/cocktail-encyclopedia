@@ -9,15 +9,34 @@ import {
 
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "./button";
+import { useFormSubmit } from "./use-form-submit";
 import Link from "next/link";
-import { useActionState } from "react";
-import { signUp } from "@/app/lib/actions/auth";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/app/lib/auth-client";
 
 export default function SignupForm() {
-  const [state, formAction, isPending] = useActionState(signUp, undefined);
+  const router = useRouter();
+
+  const { errorMessage, onSubmit, isPending } = useFormSubmit(
+    async (formData) => {
+      const { error } = await authClient.signUp.email({
+        name: String(formData.get("name")).trim(),
+        email: String(formData.get("email")),
+        password: String(formData.get("password")),
+      });
+      if (error) {
+        if (error.status === 429) {
+          return "Too many attempts. Please try again later.";
+        }
+        return error.message ?? "Something went wrong. Please try again.";
+      }
+      router.push("/");
+      router.refresh();
+    },
+  );
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form onSubmit={onSubmit} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Create an account
@@ -38,10 +57,10 @@ export default function SignupForm() {
                 name="name"
                 placeholder="Enter your name"
                 required
+                maxLength={255}
               />
               <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
-            <FieldError errors={state?.errors?.name} />
           </div>
           <div>
             <label
@@ -61,7 +80,6 @@ export default function SignupForm() {
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
-            <FieldError errors={state?.errors?.email} />
           </div>
           <div className="mt-4">
             <label
@@ -76,23 +94,23 @@ export default function SignupForm() {
                 id="password"
                 type="password"
                 name="password"
-                placeholder="Enter password"
+                placeholder="Enter password (at least 8 characters)"
                 required
-                minLength={6}
+                minLength={8}
+                maxLength={128}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
-            <FieldError errors={state?.errors?.password} />
           </div>
         </div>
         <Button className="mt-4 w-full" aria-disabled={isPending}>
           Sign up <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
         <div className="flex h-8 items-end space-x-1">
-          {state?.message && (
+          {errorMessage && (
             <>
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-              <p className="text-sm text-red-500">{state.message}</p>
+              <p className="text-sm text-red-500">{errorMessage}</p>
             </>
           )}
         </div>
@@ -105,9 +123,4 @@ export default function SignupForm() {
       </div>
     </form>
   );
-}
-
-function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors?.length) return null;
-  return <p className="mt-1 text-xs text-red-500">{errors[0]}</p>;
 }

@@ -7,21 +7,37 @@ import {
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "./button";
+import { useFormSubmit } from "./use-form-submit";
 import Link from "next/link";
-import { useActionState } from "react";
-import { useSearchParams } from "next/navigation";
-import { authenticate } from "@/app/lib/actions/auth";
+import { useRouter, useSearchParams } from "next/navigation";
+import { authClient, safeCallbackUrl } from "@/app/lib/auth-client";
 
 export default function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
+  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
+
+  const { errorMessage, onSubmit, isPending } = useFormSubmit(
+    async (formData) => {
+      const { error } = await authClient.signIn.email({
+        email: String(formData.get("email")),
+        password: String(formData.get("password")),
+      });
+      if (error) {
+        if (error.status === 429) {
+          return "Too many attempts. Please wait a few minutes and try again.";
+        }
+        return error.status === 401
+          ? "Invalid email or password."
+          : "Something went wrong. Please try again.";
+      }
+      router.push(callbackUrl);
+      router.refresh();
+    },
   );
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form onSubmit={onSubmit} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -61,13 +77,11 @@ export default function LoginForm() {
                 name="password"
                 placeholder="Enter password"
                 required
-                minLength={6}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
         </div>
-        <input type="hidden" name="redirectTo" value={callbackUrl} />
         <Button className="mt-4 w-full" aria-disabled={isPending}>
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>

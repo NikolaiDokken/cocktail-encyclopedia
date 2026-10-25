@@ -15,6 +15,13 @@
       "when": 1792956019217,
       "tag": "0001_cleanup_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792956312010,
+      "tag": "0002_better_auth",
+      "breakpoints": true
     }
   ]
 }

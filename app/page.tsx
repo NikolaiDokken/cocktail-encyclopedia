@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { auth } from "@/auth";
+import { getSession } from "@/app/lib/auth";
 import { fetchDrinksPages } from "@/app/lib/data/drinks";
 import { lusitana } from "@/app/ui/fonts";
 import Search from "@/app/ui/search";
@@ -19,7 +19,7 @@ export default async function Page(props: {
 
   const [totalPages, session] = await Promise.all([
     fetchDrinksPages(query),
-    auth(),
+    getSession(),
   ]);
   const userId = session?.user?.id ?? null;
 

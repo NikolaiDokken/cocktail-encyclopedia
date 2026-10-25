@@ -2,7 +2,7 @@
 
 Search cocktails by name or ingredient, sign up, and save the drinks you like.
 
-Built with Next.js (App Router), NextAuth (credentials login) and Neon Postgres, deployed on Vercel.
+Built with Next.js (App Router), Better Auth (email and password) and Neon Postgres, deployed on Vercel.
 
 ## Local development
 
@@ -30,9 +30,9 @@ before merging code that depends on them.
 
 ## Environment variables
 
-| Name           | Where it comes from                                                               |
-| -------------- | --------------------------------------------------------------------------------- |
-| `DATABASE_URL` | Set automatically by the Neon integration on Vercel (`POSTGRES_URL` also works)   |
-| `AUTH_SECRET`  | Generate with `openssl rand -base64 32` and add it in the Vercel project settings |
+| Name           | Where it comes from                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL` | Set automatically by the Neon integration on Vercel (`POSTGRES_URL` also works)                                                  |
+| `AUTH_SECRET`  | Generate with `openssl rand -base64 32` and add it in the Vercel project settings. Better Auth also accepts `BETTER_AUTH_SECRET` |
 
 The original Create React App version of this site is preserved under the `legacy-cra` tag.

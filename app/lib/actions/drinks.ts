@@ -2,16 +2,16 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getSession } from "@/app/lib/auth";
 import { db } from "@/app/lib/db";
 import { likes } from "@/app/lib/db/schema";
 
 export async function toggleLike(drinkId: string) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
+  const session = await getSession();
+  if (!session) {
     redirect("/login");
   }
+  const userId = session.user.id;
 
   try {
     const removed = await db
