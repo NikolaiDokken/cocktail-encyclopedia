@@ -7,9 +7,12 @@ import { getSession } from "@/app/lib/auth";
 import { db } from "@/app/lib/db";
 import { likes } from "@/app/lib/db/schema";
 
-export async function toggleLike(drinkId: string) {
+// Returns an error message for the button to show, or nothing on success.
+export async function toggleLike(
+  drinkId: string,
+): Promise<{ error: string } | undefined> {
   if (!z.string().uuid().safeParse(drinkId).success) {
-    throw new Error("Invalid drink id.");
+    return { error: "Unknown drink." };
   }
 
   const session = await getSession();
@@ -28,7 +31,7 @@ export async function toggleLike(drinkId: string) {
     }
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to save like.");
+    return { error: "Couldn't save. Please try again." };
   }
 
   revalidatePath("/");
