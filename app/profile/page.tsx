@@ -7,7 +7,7 @@ import DrinksList from "@/app/ui/drinks/drinks-list";
 export default async function Page() {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect("/login?callbackUrl=/profile");
   }
 
   const drinks = await fetchLikedDrinks(session.user.id);

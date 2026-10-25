@@ -1,8 +1,14 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { getSession } from "@/app/lib/auth";
 import Logo from "@/app/ui/logo";
 import LoginForm from "@/app/ui/login-form";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  if (await getSession()) {
+    redirect("/");
+  }
+
   return (
     <main className="flex items-center justify-center">
       <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4">
