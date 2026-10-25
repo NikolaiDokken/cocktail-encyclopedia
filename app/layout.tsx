@@ -1,6 +1,12 @@
 import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
 import SideNav from "@/app/ui/dashboard/sidenav";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cocktail Encyclopedia",
+  description: "Search cocktails by name or ingredient and save your favourites.",
+};
 
 export default function RootLayout({
   children,

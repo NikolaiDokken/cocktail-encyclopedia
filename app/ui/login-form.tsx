@@ -7,10 +7,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "./button";
+import Link from "next/link";
 import { useActionState } from "react";
-import { authenticate } from "@/app/lib/actions";
+import { useSearchParams } from "next/navigation";
+import { authenticate } from "@/app/lib/actions/auth";
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
@@ -63,6 +67,7 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
+        <input type="hidden" name="redirectTo" value={callbackUrl} />
         <Button className="mt-4 w-full" aria-disabled={isPending}>
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
@@ -74,6 +79,12 @@ export default function LoginForm() {
             </>
           )}
         </div>
+        <p className="text-sm text-gray-600">
+          No account yet?{" "}
+          <Link href="/signup" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
+        </p>
       </div>
     </form>
   );

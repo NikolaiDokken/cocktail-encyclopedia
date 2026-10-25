@@ -1,10 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
-/**
- * This file contains callback logic to handle
- * custom logic after login/logout
- */
-export const authConfig: NextAuthConfig = {
+// Kept free of database and bcrypt imports so it can be shared with proxy.ts.
+export const authConfig = {
   session: {
     strategy: "jwt",
   },
@@ -12,16 +9,25 @@ export const authConfig: NextAuthConfig = {
     signIn: "/login",
   },
   callbacks: {
-    // Enrich the session object with additional user data (id, role, etc.)
-    async jwt(token, user) {
-      if (user) {
-        token.id = user.id;
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const { pathname } = nextUrl;
+
+      if (pathname.startsWith("/profile")) {
+        // Returning false redirects to the sign-in page.
+        return isLoggedIn;
       }
-      return token;
+      if (isLoggedIn && (pathname === "/login" || pathname === "/signup")) {
+        return Response.redirect(new URL("/", nextUrl));
+      }
+      return true;
     },
-    async session(session, token) {
-      session.user.id = token.id;
+    session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
       return session;
     },
   },
-};
+  providers: [],
+} satisfies NextAuthConfig;

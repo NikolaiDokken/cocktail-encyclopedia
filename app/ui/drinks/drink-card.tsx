@@ -1,28 +1,40 @@
-import {DrinksTableType} from "@/app/lib/definitions";
-import {LikeDrink} from "@/app/ui/drinks/buttons";
-import Image from 'next/image'
+import Image from "next/image";
+import type { Drink } from "@/app/lib/definitions";
+import { LikeDrink } from "@/app/ui/drinks/buttons";
 
-export default function DrinkCard({drink}:{drink: DrinksTableType}) {
-    return (
-        <div className="max-w-sm w-full lg:max-w-full lg:flex border border-gray-200 rounded">
-            {drink.image_url ?
-            <Image
-                src={drink.image_url}
-                alt="Picture of the author"
-                height={100}
-                width={150}
-                objectFit="fill"
-            />
-                :<div></div>}
-            <div
-                className="bg-white rounded-b lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-                <div className="mb-8">
-                    <div className="text-gray-900 font-bold text-xl mb-2">{drink.name}</div>
-                    <p className="text-gray-700 text-base">{drink.instructions}</p>
-                </div>
-                <div className="flex items-center">
-                    <LikeDrink drinkId={drink.id} />
-                </div>
-            </div>
-        </div>);
+export default function DrinkCard({
+  drink,
+  signedIn,
+}: {
+  drink: Drink;
+  signedIn: boolean;
+}) {
+  return (
+    <div className="flex w-full flex-col overflow-hidden rounded border border-gray-200 lg:flex-row">
+      {drink.image_url && (
+        <Image
+          src={drink.image_url}
+          alt={drink.name}
+          height={100}
+          width={150}
+          className="h-48 w-full flex-none object-cover lg:h-auto lg:w-[150px]"
+        />
+      )}
+      <div className="flex flex-1 flex-col justify-between bg-white p-4 leading-normal">
+        <div className="mb-4">
+          <div className="mb-2 text-xl font-bold text-gray-900">
+            {drink.name}
+          </div>
+          <p className="text-base text-gray-700">{drink.instructions}</p>
+        </div>
+        <div className="flex items-center">
+          <LikeDrink
+            drinkId={drink.id}
+            liked={drink.liked}
+            signedIn={signedIn}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

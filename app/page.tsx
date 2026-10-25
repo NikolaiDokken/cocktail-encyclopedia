@@ -1,10 +1,11 @@
-import { fetchDrinksPages } from "./lib/data/drinks";
-import { lusitana } from "./ui/fonts";
 import { Suspense } from "react";
+import { auth } from "@/auth";
+import { fetchDrinksPages } from "@/app/lib/data/drinks";
+import { lusitana } from "@/app/ui/fonts";
 import Search from "@/app/ui/search";
-import Pagination from "@/app/ui/invoices/pagination";
-import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
-import DrinksList from "@/app/ui/drinks/drinks-list";
+import Pagination from "@/app/ui/pagination";
+import SearchResults from "@/app/ui/drinks/search-results";
+import DrinksListSkeleton from "@/app/ui/drinks/skeleton";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -16,7 +17,11 @@ export default async function Page(props: {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
 
-  const totalPages = await fetchDrinksPages(query);
+  const [totalPages, session] = await Promise.all([
+    fetchDrinksPages(query),
+    auth(),
+  ]);
+  const userId = session?.user?.id ?? null;
 
   return (
     <div className="w-full">
@@ -24,11 +29,14 @@ export default async function Page(props: {
         <h1 className={`${lusitana.className} text-2xl`}>Drinks</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Get a drink..." />
-        {/*<CreateInvoice />*/}
+        <Search placeholder="Search by drink or ingredient..." />
       </div>
-      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <DrinksList query={query} currentPage={currentPage} />
+      <Suspense key={query + currentPage} fallback={<DrinksListSkeleton />}>
+        <SearchResults
+          query={query}
+          currentPage={currentPage}
+          userId={userId}
+        />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

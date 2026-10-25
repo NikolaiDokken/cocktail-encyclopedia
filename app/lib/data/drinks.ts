@@ -1,29 +1,41 @@
-import { sql } from "@vercel/postgres";
-import { DrinksTableType } from "../definitions";
+import { sql } from "@/app/lib/db";
+import type { Drink } from "@/app/lib/definitions";
 
 const ITEMS_PER_PAGE = 10;
 
-export async function fetchFilteredDrinks(query: string, currentPage: number) {
+// Matches drinks by name or by any of their ingredients. `liked` is relative
+// to `userId` and is always false for anonymous visitors.
+export async function fetchFilteredDrinks(
+  query: string,
+  currentPage: number,
+  userId: string | null,
+) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pattern = `%${query}%`;
 
   try {
-    const drinks = await sql<DrinksTableType>`
-      SELECT DISTINCT
+    return await sql<Drink>`
+      SELECT
         drinks.id,
         drinks.name,
         drinks.instructions,
-        drinks.image_url
+        drinks.image_url,
+        EXISTS (
+          SELECT 1 FROM likes
+          WHERE likes.drink_id = drinks.id AND likes.user_id = ${userId}
+        ) AS liked
       FROM drinks
-      JOIN drink_ingredient ON drinks.id = drink_ingredient.drink_id
-      JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
       WHERE
-        drinks.name ILIKE ${`%${query}%`} OR
-        ingredients.name ILIKE ${`%${query}%`}
+        drinks.name ILIKE ${pattern} OR
+        EXISTS (
+          SELECT 1 FROM drink_ingredient
+          JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
+          WHERE drink_ingredient.drink_id = drinks.id
+            AND ingredients.name ILIKE ${pattern}
+        )
       ORDER BY drinks.name ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset};
     `;
-
-    return drinks.rows;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch drinks.");
@@ -31,20 +43,45 @@ export async function fetchFilteredDrinks(query: string, currentPage: number) {
 }
 
 export async function fetchDrinksPages(query: string) {
-  try {
-    const count = await sql`SELECT COUNT(DISTINCT drinks.id) as count
-    FROM drinks
-    JOIN drink_ingredient ON drinks.id = drink_ingredient.drink_id
-    JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
-    WHERE
-      drinks.name ILIKE ${`%${query}%`} OR
-      ingredients.name ILIKE ${`%${query}%`};
-  `;
+  const pattern = `%${query}%`;
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
+  try {
+    const [{ count }] = await sql<{ count: string }>`
+      SELECT COUNT(*) AS count
+      FROM drinks
+      WHERE
+        drinks.name ILIKE ${pattern} OR
+        EXISTS (
+          SELECT 1 FROM drink_ingredient
+          JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
+          WHERE drink_ingredient.drink_id = drinks.id
+            AND ingredients.name ILIKE ${pattern}
+        );
+    `;
+
+    return Math.ceil(Number(count) / ITEMS_PER_PAGE);
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch total number of invoices.");
+    throw new Error("Failed to fetch total number of drinks.");
+  }
+}
+
+export async function fetchLikedDrinks(userId: string) {
+  try {
+    return await sql<Drink>`
+      SELECT
+        drinks.id,
+        drinks.name,
+        drinks.instructions,
+        drinks.image_url,
+        TRUE AS liked
+      FROM drinks
+      JOIN likes ON likes.drink_id = drinks.id
+      WHERE likes.user_id = ${userId}
+      ORDER BY drinks.name ASC;
+    `;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch liked drinks.");
   }
 }
