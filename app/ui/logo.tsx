@@ -6,7 +6,7 @@ export default function Logo() {
     <div
       className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
     >
-      <BeakerIcon className="h-12 w-12 rotate-[15deg]" />
+      <BeakerIcon className="h-12 w-12 rotate-15" />
       <p className="text-[44px]">Drinks</p>
     </div>
   );

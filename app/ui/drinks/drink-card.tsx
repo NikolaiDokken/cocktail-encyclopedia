@@ -10,7 +10,7 @@ export default function DrinkCard({
   signedIn: boolean;
 }) {
   return (
-    <div className="flex w-full flex-col overflow-hidden rounded border border-gray-200 lg:flex-row">
+    <div className="flex w-full flex-col overflow-hidden rounded-sm border border-gray-200 lg:flex-row">
       {drink.imageUrl && (
         <Image
           src={drink.imageUrl}
