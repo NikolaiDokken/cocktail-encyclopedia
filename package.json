@@ -10,9 +10,10 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
-    "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "seed": "node --env-file=.env.local scripts/seed.mjs"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
