@@ -1,4 +1,4 @@
-import type { Drink } from "@/app/lib/definitions";
+import type { Drink } from "@/app/lib/drinks";
 import DrinkCard from "@/app/ui/drinks/drink-card";
 
 export default function DrinksList({

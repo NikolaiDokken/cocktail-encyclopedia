@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getSession } from "@/app/lib/auth";
-import { fetchDrinksPages } from "@/app/lib/data/drinks";
+import { fetchDrinksPages } from "@/app/lib/drinks";
 import { lusitana } from "@/app/ui/fonts";
 import Search from "@/app/ui/search";
 import Pagination from "@/app/ui/pagination";

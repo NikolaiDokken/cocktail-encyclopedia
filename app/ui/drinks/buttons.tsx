@@ -4,7 +4,7 @@ import { useOptimistic, useState } from "react";
 import Link from "next/link";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
-import { toggleLike } from "@/app/lib/actions/drinks";
+import { toggleLike } from "@/app/lib/actions";
 
 const buttonClass = "rounded-md border p-2 hover:bg-gray-100";
 

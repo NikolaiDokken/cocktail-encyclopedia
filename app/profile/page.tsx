@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/app/lib/auth";
-import { fetchLikedDrinks } from "@/app/lib/data/drinks";
+import { fetchLikedDrinks } from "@/app/lib/drinks";
 import { lusitana } from "@/app/ui/fonts";
 import DrinksList from "@/app/ui/drinks/drinks-list";
 

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Drink } from "@/app/lib/definitions";
+import type { Drink } from "@/app/lib/drinks";
 import { LikeDrink } from "@/app/ui/drinks/buttons";
 
 export default function DrinkCard({

@@ -6,7 +6,6 @@ import {
   ingredients,
   likes,
 } from "@/app/lib/db/schema";
-import type { Drink } from "@/app/lib/definitions";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -60,7 +59,7 @@ export async function fetchFilteredDrinks(
   query: string,
   currentPage: number,
   userId: string | null,
-): Promise<Drink[]> {
+) {
   try {
     return await db
       .select({ ...drinkColumns, liked: likedBy(userId) })
@@ -89,7 +88,7 @@ export async function fetchDrinksPages(query: string) {
   }
 }
 
-export async function fetchLikedDrinks(userId: string): Promise<Drink[]> {
+export async function fetchLikedDrinks(userId: string) {
   try {
     return await db
       .select({ ...drinkColumns, liked: sql<boolean>`true` })
@@ -102,3 +101,5 @@ export async function fetchLikedDrinks(userId: string): Promise<Drink[]> {
     throw new Error("Failed to fetch liked drinks.");
   }
 }
+
+export type Drink = Awaited<ReturnType<typeof fetchFilteredDrinks>>[number];

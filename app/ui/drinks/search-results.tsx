@@ -1,4 +1,4 @@
-import { fetchFilteredDrinks } from "@/app/lib/data/drinks";
+import { fetchFilteredDrinks } from "@/app/lib/drinks";
 import DrinksList from "@/app/ui/drinks/drinks-list";
 
 export default async function SearchResults({
