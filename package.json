@@ -10,7 +10,9 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
-    "seed": "node --env-file=.env.local scripts/seed.mjs"
+    "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -34,6 +36,8 @@
     "@types/react-dom": "^19.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^5.9.3"
   }
 }

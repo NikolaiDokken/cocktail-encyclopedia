@@ -17,9 +17,9 @@ pnpm dev
 
 ## Environment variables
 
-| Name | Where it comes from |
-| --- | --- |
-| `DATABASE_URL` | Set automatically by the Neon integration on Vercel (`POSTGRES_URL` also works) |
-| `AUTH_SECRET` | Generate with `openssl rand -base64 32` and add it in the Vercel project settings |
+| Name           | Where it comes from                                                               |
+| -------------- | --------------------------------------------------------------------------------- |
+| `DATABASE_URL` | Set automatically by the Neon integration on Vercel (`POSTGRES_URL` also works)   |
+| `AUTH_SECRET`  | Generate with `openssl rand -base64 32` and add it in the Vercel project settings |
 
 The original Create React App version of this site is preserved under the `legacy-cra` tag.

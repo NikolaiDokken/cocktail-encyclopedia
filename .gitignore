@@ -37,3 +37,7 @@ next-env.d.ts
 
 # editors
 .idea/
+.env*
+
+# local database backups
+.backups/

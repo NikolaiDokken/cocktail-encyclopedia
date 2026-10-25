@@ -14,10 +14,7 @@ import { useActionState } from "react";
 import { signUp } from "@/app/lib/actions/auth";
 
 export default function SignupForm() {
-  const [state, formAction, isPending] = useActionState(
-    signUp,
-    undefined,
-  );
+  const [state, formAction, isPending] = useActionState(signUp, undefined);
 
   return (
     <form action={formAction} className="space-y-3">

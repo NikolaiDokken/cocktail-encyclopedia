@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Cocktail Encyclopedia",
-  description: "Search cocktails by name or ingredient and save your favourites.",
+  description:
+    "Search cocktails by name or ingredient and save your favourites.",
 };
 
 export default function RootLayout({

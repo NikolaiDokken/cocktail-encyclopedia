@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { ArrowRightEndOnRectangleIcon, PowerIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightEndOnRectangleIcon,
+  PowerIcon,
+} from "@heroicons/react/24/outline";
 import NavLinks from "@/app/ui/dashboard/nav-links";
 import AcmeLogo from "@/app/ui/acme-logo";
 import { auth, signOut } from "@/auth";
