@@ -29,6 +29,20 @@
       "when": 1792957879702,
       "tag": "0003_drop_users_password",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792960493297,
+      "tag": "0004_ingredient_structure",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792960508949,
+      "tag": "0005_ingredient_cleanup",
+      "breakpoints": true
     }
   ]
 }

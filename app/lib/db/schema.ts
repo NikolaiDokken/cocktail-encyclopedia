@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   bigint,
   boolean,
   foreignKey,
@@ -10,6 +11,7 @@ import {
   text,
   timestamp,
   unique,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -129,6 +131,8 @@ export const drinks = pgTable(
   (table) => [unique("drinks_name_key").on(table.name)],
 );
 
+// Names are unique regardless of case. Store them NFC-normalized so that
+// visually identical names (e.g. "Crème") compare equal.
 export const ingredients = pgTable(
   "ingredients",
   {
@@ -136,8 +140,34 @@ export const ingredients = pgTable(
       .default(sql`uuid_generate_v4()`)
       .primaryKey(),
     name: varchar({ length: 255 }).notNull(),
+    // The broader ingredient this is a kind of, e.g. White Rum -> Rum.
+    parentId: uuid("parent_id").references((): AnyPgColumn => ingredients.id, {
+      onDelete: "set null",
+    }),
   },
-  (table) => [unique("ingredients_name_key").on(table.name)],
+  (table) => [
+    uniqueIndex("ingredients_name_lower_key").on(sql`lower(${table.name})`),
+    index("ingredients_parent_id_idx").on(table.parentId),
+  ],
+);
+
+// Other names for an ingredient ("Fresh Lime Juice" -> Lime Juice), used by
+// search and to avoid creating duplicates.
+export const ingredientAliases = pgTable(
+  "ingredient_aliases",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    ingredientId: uuid("ingredient_id")
+      .notNull()
+      .references(() => ingredients.id, { onDelete: "cascade" }),
+    alias: varchar({ length: 255 }).notNull(),
+  },
+  (table) => [
+    uniqueIndex("ingredient_aliases_alias_lower_key").on(
+      sql`lower(${table.alias})`,
+    ),
+    index("ingredient_aliases_ingredient_id_idx").on(table.ingredientId),
+  ],
 );
 
 export const drinkIngredient = pgTable(
@@ -150,6 +180,9 @@ export const drinkIngredient = pgTable(
     ingredientId: uuid("ingredient_id").notNull(),
     amount: varchar({ length: 50 }).notNull(),
     unit: varchar({ length: 50 }).notNull(),
+    // Order of the line within the recipe, starting at 0.
+    position: integer().default(0).notNull(),
+    optional: boolean().default(false).notNull(),
   },
   (table) => [
     foreignKey({
@@ -163,6 +196,7 @@ export const drinkIngredient = pgTable(
       name: "drink_ingredient_ingredient_id_fkey",
     }).onDelete("cascade"),
     index("drink_ingredient_drink_id_idx").on(table.drinkId),
+    index("drink_ingredient_ingredient_id_idx").on(table.ingredientId),
   ],
 );
 
