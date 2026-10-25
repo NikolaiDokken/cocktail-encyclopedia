@@ -49,7 +49,9 @@ function likedBy(userId: string | null) {
 const drinkColumns = {
   id: drinks.id,
   name: drinks.name,
+  category: drinks.category,
   instructions: drinks.instructions,
+  garnish: drinks.garnish,
   imageUrl: drinks.imageUrl,
 };
 

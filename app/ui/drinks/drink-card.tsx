@@ -22,10 +22,22 @@ export default function DrinkCard({
       )}
       <div className="flex flex-1 flex-col justify-between bg-white p-4 leading-normal">
         <div className="mb-4">
-          <div className="mb-2 text-xl font-bold text-gray-900">
-            {drink.name}
+          <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-xl font-bold text-gray-900">
+              {drink.name}
+            </span>
+            {drink.category && (
+              <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-800">
+                {drink.category}
+              </span>
+            )}
           </div>
           <p className="text-base text-gray-700">{drink.instructions}</p>
+          {drink.garnish && (
+            <p className="mt-2 text-sm text-gray-500">
+              Garnish: {drink.garnish}
+            </p>
+          )}
         </div>
         <div className="flex items-center">
           <LikeDrink

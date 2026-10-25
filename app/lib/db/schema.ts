@@ -1,8 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
-  date,
   foreignKey,
-  integer,
+  index,
   pgTable,
   primaryKey,
   text,
@@ -25,21 +24,23 @@ export const users = pgTable(
     email: text().notNull(),
     password: text().notNull(),
   },
-  (table) => [
-    unique("users_name_key").on(table.name),
-    unique("users_email_key").on(table.email),
-    unique("users_email_key1").on(table.email),
-  ],
+  (table) => [unique("users_email_key").on(table.email)],
 );
 
-export const drinks = pgTable("drinks", {
-  id: uuid()
-    .default(sql`uuid_generate_v4()`)
-    .primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  instructions: text(),
-  imageUrl: varchar("image_url", { length: 2083 }),
-});
+export const drinks = pgTable(
+  "drinks",
+  {
+    id: uuid()
+      .default(sql`uuid_generate_v4()`)
+      .primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    category: varchar({ length: 255 }),
+    instructions: text(),
+    garnish: text(),
+    imageUrl: varchar("image_url", { length: 2083 }),
+  },
+  (table) => [unique("drinks_name_key").on(table.name)],
+);
 
 export const ingredients = pgTable(
   "ingredients",
@@ -74,6 +75,7 @@ export const drinkIngredient = pgTable(
       foreignColumns: [ingredients.id],
       name: "drink_ingredient_ingredient_id_fkey",
     }).onDelete("cascade"),
+    index("drink_ingredient_drink_id_idx").on(table.drinkId),
   ],
 );
 
@@ -97,33 +99,4 @@ export const likes = pgTable(
     }).onDelete("cascade"),
     primaryKey({ columns: [table.userId, table.drinkId], name: "likes_pkey" }),
   ],
-);
-
-// Left over from the Next.js dashboard tutorial; unused by the app.
-export const customers = pgTable("customers", {
-  id: uuid()
-    .default(sql`uuid_generate_v4()`)
-    .primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull(),
-  imageUrl: varchar("image_url", { length: 255 }).notNull(),
-});
-
-export const invoices = pgTable("invoices", {
-  id: uuid()
-    .default(sql`uuid_generate_v4()`)
-    .primaryKey(),
-  customerId: uuid("customer_id").notNull(),
-  amount: integer().notNull(),
-  status: varchar({ length: 255 }).notNull(),
-  date: date().notNull(),
-});
-
-export const revenue = pgTable(
-  "revenue",
-  {
-    month: varchar({ length: 4 }).notNull(),
-    revenue: integer().notNull(),
-  },
-  (table) => [unique("revenue_month_key").on(table.month)],
 );
