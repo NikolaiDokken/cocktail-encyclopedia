@@ -4,9 +4,7 @@ import { headers } from "next/headers";
 import { betterAuth } from "better-auth";
 import { APIError } from "better-auth/api";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { verifyPassword } from "better-auth/crypto";
 import { nextCookies } from "better-auth/next-js";
-import bcrypt from "bcryptjs";
 import { db } from "@/app/lib/db";
 import {
   accounts,
@@ -51,16 +49,7 @@ export const auth = betterAuth({
   advanced: {
     database: { generateId: "uuid" },
   },
-  emailAndPassword: {
-    enabled: true,
-    password: {
-      // Accounts created before the switch to Better Auth have bcrypt hashes.
-      verify: ({ hash, password }) =>
-        hash.startsWith("$2")
-          ? bcrypt.compare(password, hash)
-          : verifyPassword({ hash, password }),
-    },
-  },
+  emailAndPassword: { enabled: true },
   databaseHooks: {
     user: {
       create: { before: async (user) => assertValidName(user.name) },
