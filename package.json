@@ -20,6 +20,7 @@
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:prod": "DRIZZLE_TARGET=production drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "seed": "node --env-file=.env.local scripts/seed.mjs"
   },
