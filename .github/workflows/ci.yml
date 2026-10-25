@@ -26,3 +26,6 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+          # Better Auth refuses its default secret in production builds. This
+          # placeholder is only used to compile; deployments use AUTH_SECRET.
+          BETTER_AUTH_SECRET: ci-build-placeholder-not-used-at-runtime
