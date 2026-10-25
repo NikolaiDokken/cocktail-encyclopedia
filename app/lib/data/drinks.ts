@@ -10,9 +10,10 @@ import type { Drink } from "@/app/lib/definitions";
 
 const ITEMS_PER_PAGE = 10;
 
-// Drinks whose name or any ingredient matches the query.
+// Drinks whose name or any ingredient contains the query. LIKE wildcards in
+// the query are escaped so "%" and "_" match literally.
 function matchesQuery(query: string) {
-  const pattern = `%${query}%`;
+  const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
   return or(
     ilike(drinks.name, pattern),
     exists(

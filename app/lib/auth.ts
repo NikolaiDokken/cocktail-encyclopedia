@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { betterAuth } from "better-auth";
+import { APIError } from "better-auth/api";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { verifyPassword } from "better-auth/crypto";
 import { nextCookies } from "better-auth/next-js";
@@ -23,6 +24,15 @@ const allowedHosts = [
   process.env.VERCEL_URL,
   "localhost:*",
 ].filter((host): host is string => Boolean(host));
+
+function assertValidName(name: unknown) {
+  if (name === undefined) return;
+  if (typeof name !== "string" || !name.trim() || name.length > 255) {
+    throw new APIError("BAD_REQUEST", {
+      message: "Name must be between 1 and 255 characters.",
+    });
+  }
+}
 
 export const auth = betterAuth({
   appName: "Cocktail Encyclopedia",
@@ -49,6 +59,12 @@ export const auth = betterAuth({
         hash.startsWith("$2")
           ? bcrypt.compare(password, hash)
           : verifyPassword({ hash, password }),
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: { before: async (user) => assertValidName(user.name) },
+      update: { before: async (user) => assertValidName(user.name) },
     },
   },
   session: {

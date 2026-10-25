@@ -1,5 +1,6 @@
 "use server";
 import { and, eq } from "drizzle-orm";
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSession } from "@/app/lib/auth";
@@ -7,6 +8,10 @@ import { db } from "@/app/lib/db";
 import { likes } from "@/app/lib/db/schema";
 
 export async function toggleLike(drinkId: string) {
+  if (!z.string().uuid().safeParse(drinkId).success) {
+    throw new Error("Invalid drink id.");
+  }
+
   const session = await getSession();
   if (!session) {
     redirect("/login");
