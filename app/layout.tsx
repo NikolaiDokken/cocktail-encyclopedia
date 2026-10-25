@@ -1,6 +1,6 @@
 import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
-import SideNav from "@/app/ui/dashboard/sidenav";
+import SideNav from "@/app/ui/nav/sidenav";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

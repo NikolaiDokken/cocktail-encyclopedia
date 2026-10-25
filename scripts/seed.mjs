@@ -1,4 +1,4 @@
-// Creates the database tables and loads app/lib/drink-data.json.
+// Creates the database tables and loads scripts/data/drinks.json.
 // Safe to run more than once: existing tables and drinks are left untouched.
 //
 //   pnpm seed   (reads DATABASE_URL from .env.local)
@@ -15,10 +15,7 @@ if (!url) {
 const sql = neon(url);
 
 const drinks = JSON.parse(
-  await readFile(
-    new URL("../app/lib/drink-data.json", import.meta.url),
-    "utf8",
-  ),
+  await readFile(new URL("./data/drinks.json", import.meta.url), "utf8"),
 );
 
 async function createTables() {

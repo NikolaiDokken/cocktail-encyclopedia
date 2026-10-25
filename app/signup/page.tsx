@@ -1,4 +1,4 @@
-import AcmeLogo from "@/app/ui/acme-logo";
+import Logo from "@/app/ui/logo";
 import SignupForm from "@/app/ui/signup-form";
 
 export default function SignupPage() {
@@ -7,7 +7,7 @@ export default function SignupPage() {
       <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4">
         <div className="flex h-20 w-full items-end rounded-lg bg-orange-400 p-3 md:h-36">
           <div className="w-32 text-white md:w-36">
-            <AcmeLogo />
+            <Logo />
           </div>
         </div>
         <SignupForm />

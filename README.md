@@ -11,7 +11,7 @@ Requires Node 20.9+ and pnpm.
 ```bash
 pnpm install
 vercel env pull .env.local   # DATABASE_URL from the Neon integration, AUTH_SECRET
-pnpm seed                    # create tables and load app/lib/drink-data.json (idempotent)
+pnpm seed                    # create tables and load scripts/data/drinks.json (idempotent)
 pnpm dev
 ```
 
