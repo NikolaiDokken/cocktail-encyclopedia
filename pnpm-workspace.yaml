@@ -1,3 +1,5 @@
-# unrs-resolver ships prebuilt binaries; its install script is not needed.
 allowBuilds:
+  # Installs the platform binary used by drizzle-kit.
+  esbuild: true
+  # Ships prebuilt binaries; its install script is not needed.
   unrs-resolver: false

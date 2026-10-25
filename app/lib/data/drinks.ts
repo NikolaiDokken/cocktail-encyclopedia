@@ -1,41 +1,71 @@
-import { sql } from "@/app/lib/db";
+import { and, asc, count, eq, exists, ilike, or, sql } from "drizzle-orm";
+import { db } from "@/app/lib/db";
+import {
+  drinkIngredient,
+  drinks,
+  ingredients,
+  likes,
+} from "@/app/lib/db/schema";
 import type { Drink } from "@/app/lib/definitions";
 
 const ITEMS_PER_PAGE = 10;
 
-// Matches drinks by name or by any of their ingredients. `liked` is relative
-// to `userId` and is always false for anonymous visitors.
+// Drinks whose name or any ingredient matches the query.
+function matchesQuery(query: string) {
+  const pattern = `%${query}%`;
+  return or(
+    ilike(drinks.name, pattern),
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(drinkIngredient)
+        .innerJoin(
+          ingredients,
+          eq(drinkIngredient.ingredientId, ingredients.id),
+        )
+        .where(
+          and(
+            eq(drinkIngredient.drinkId, drinks.id),
+            ilike(ingredients.name, pattern),
+          ),
+        ),
+    ),
+  );
+}
+
+// Always false for anonymous visitors.
+function likedBy(userId: string | null) {
+  if (!userId) {
+    return sql<boolean>`false`;
+  }
+  return exists(
+    db
+      .select({ one: sql`1` })
+      .from(likes)
+      .where(and(eq(likes.drinkId, drinks.id), eq(likes.userId, userId))),
+  ).mapWith(Boolean);
+}
+
+const drinkColumns = {
+  id: drinks.id,
+  name: drinks.name,
+  instructions: drinks.instructions,
+  imageUrl: drinks.imageUrl,
+};
+
 export async function fetchFilteredDrinks(
   query: string,
   currentPage: number,
   userId: string | null,
-) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pattern = `%${query}%`;
-
+): Promise<Drink[]> {
   try {
-    return await sql<Drink>`
-      SELECT
-        drinks.id,
-        drinks.name,
-        drinks.instructions,
-        drinks.image_url,
-        EXISTS (
-          SELECT 1 FROM likes
-          WHERE likes.drink_id = drinks.id AND likes.user_id = ${userId}
-        ) AS liked
-      FROM drinks
-      WHERE
-        drinks.name ILIKE ${pattern} OR
-        EXISTS (
-          SELECT 1 FROM drink_ingredient
-          JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
-          WHERE drink_ingredient.drink_id = drinks.id
-            AND ingredients.name ILIKE ${pattern}
-        )
-      ORDER BY drinks.name ASC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset};
-    `;
+    return await db
+      .select({ ...drinkColumns, liked: likedBy(userId) })
+      .from(drinks)
+      .where(matchesQuery(query))
+      .orderBy(asc(drinks.name))
+      .limit(ITEMS_PER_PAGE)
+      .offset((currentPage - 1) * ITEMS_PER_PAGE);
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch drinks.");
@@ -43,43 +73,27 @@ export async function fetchFilteredDrinks(
 }
 
 export async function fetchDrinksPages(query: string) {
-  const pattern = `%${query}%`;
-
   try {
-    const [{ count }] = await sql<{ count: string }>`
-      SELECT COUNT(*) AS count
-      FROM drinks
-      WHERE
-        drinks.name ILIKE ${pattern} OR
-        EXISTS (
-          SELECT 1 FROM drink_ingredient
-          JOIN ingredients ON drink_ingredient.ingredient_id = ingredients.id
-          WHERE drink_ingredient.drink_id = drinks.id
-            AND ingredients.name ILIKE ${pattern}
-        );
-    `;
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(drinks)
+      .where(matchesQuery(query));
 
-    return Math.ceil(Number(count) / ITEMS_PER_PAGE);
+    return Math.ceil(total / ITEMS_PER_PAGE);
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch total number of drinks.");
   }
 }
 
-export async function fetchLikedDrinks(userId: string) {
+export async function fetchLikedDrinks(userId: string): Promise<Drink[]> {
   try {
-    return await sql<Drink>`
-      SELECT
-        drinks.id,
-        drinks.name,
-        drinks.instructions,
-        drinks.image_url,
-        TRUE AS liked
-      FROM drinks
-      JOIN likes ON likes.drink_id = drinks.id
-      WHERE likes.user_id = ${userId}
-      ORDER BY drinks.name ASC;
-    `;
+    return await db
+      .select({ ...drinkColumns, liked: sql<boolean>`true` })
+      .from(drinks)
+      .innerJoin(likes, eq(likes.drinkId, drinks.id))
+      .where(eq(likes.userId, userId))
+      .orderBy(asc(drinks.name));
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch liked drinks.");

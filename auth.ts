@@ -3,12 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { authConfig } from "./auth.config";
-import { sql } from "@/app/lib/db";
-import type { User } from "@/app/lib/definitions";
+import { eq } from "drizzle-orm";
+import { db } from "@/app/lib/db";
+import { users } from "@/app/lib/db/schema";
 
-async function getUser(email: string): Promise<User | undefined> {
+async function getUser(email: string) {
   try {
-    const [user] = await sql<User>`SELECT * FROM users WHERE email = ${email}`;
+    const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   } catch (error) {
     console.error("Failed to fetch user:", error);

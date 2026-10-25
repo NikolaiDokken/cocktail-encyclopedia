@@ -3,7 +3,8 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
-import { sql } from "@/app/lib/db";
+import { db } from "@/app/lib/db";
+import { users } from "@/app/lib/db/schema";
 
 export async function authenticate(
   prevState: string | undefined,
@@ -62,13 +63,11 @@ export async function signUp(
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    await sql`
-      INSERT INTO users (name, email, password)
-      VALUES (${name}, ${email}, ${hashedPassword})
-    `;
+    await db.insert(users).values({ name, email, password: hashedPassword });
   } catch (error) {
-    // PostgreSQL unique violation
-    if ((error as { code?: string }).code === "23505") {
+    // PostgreSQL unique violation (Drizzle wraps the driver error in `cause`)
+    const code = (error as { cause?: { code?: string } }).cause?.code;
+    if (code === "23505") {
       return { message: "Email already exists. Please log in instead." };
     }
 

@@ -1,5 +1,6 @@
-// Creates the database tables and loads scripts/data/drinks.json.
-// Safe to run more than once: existing tables and drinks are left untouched.
+// Loads scripts/data/drinks.json into the database. Run `pnpm db:migrate`
+// first so the tables exist. Safe to run more than once: drinks that already
+// exist are left untouched.
 //
 //   pnpm seed   (reads DATABASE_URL from .env.local)
 import { readFile } from "node:fs/promises";
@@ -17,47 +18,6 @@ const sql = neon(url);
 const drinks = JSON.parse(
   await readFile(new URL("./data/drinks.json", import.meta.url), "utf8"),
 );
-
-async function createTables() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS users (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
-    );
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS drinks (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL UNIQUE,
-      instructions TEXT NOT NULL,
-      image_url TEXT
-    );
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS ingredients (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL UNIQUE
-    );
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS drink_ingredient (
-      drink_id UUID NOT NULL REFERENCES drinks(id) ON DELETE CASCADE,
-      ingredient_id UUID NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
-      amount TEXT,
-      unit VARCHAR(255)
-    );
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS likes (
-      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      drink_id UUID NOT NULL REFERENCES drinks(id) ON DELETE CASCADE,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      PRIMARY KEY (user_id, drink_id)
-    );
-  `;
-}
 
 async function ingredientId(name) {
   await sql`
@@ -96,6 +56,5 @@ async function seedDrinks() {
   return inserted;
 }
 
-await createTables();
 const inserted = await seedDrinks();
 console.log(`Seeded ${inserted} new drinks (${drinks.length} in data file).`);

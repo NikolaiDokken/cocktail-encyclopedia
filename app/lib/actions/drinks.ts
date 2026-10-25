@@ -1,8 +1,10 @@
 "use server";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { sql } from "@/app/lib/db";
+import { db } from "@/app/lib/db";
+import { likes } from "@/app/lib/db/schema";
 
 export async function toggleLike(drinkId: string) {
   const session = await auth();
@@ -12,13 +14,12 @@ export async function toggleLike(drinkId: string) {
   }
 
   try {
-    const removed = await sql`
-      DELETE FROM likes
-      WHERE drink_id = ${drinkId} AND user_id = ${userId}
-      RETURNING drink_id;
-    `;
+    const removed = await db
+      .delete(likes)
+      .where(and(eq(likes.drinkId, drinkId), eq(likes.userId, userId)))
+      .returning({ drinkId: likes.drinkId });
     if (removed.length === 0) {
-      await sql`INSERT INTO likes (drink_id, user_id) VALUES (${drinkId}, ${userId});`;
+      await db.insert(likes).values({ drinkId, userId });
     }
   } catch (error) {
     console.error("Database Error:", error);

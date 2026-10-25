@@ -11,9 +11,9 @@ export default function DrinkCard({
 }) {
   return (
     <div className="flex w-full flex-col overflow-hidden rounded border border-gray-200 lg:flex-row">
-      {drink.image_url && (
+      {drink.imageUrl && (
         <Image
-          src={drink.image_url}
+          src={drink.imageUrl}
           alt={drink.name}
           height={100}
           width={150}

@@ -11,9 +11,22 @@ Requires Node 20.9+ and pnpm.
 ```bash
 pnpm install
 vercel env pull .env.local   # DATABASE_URL from the Neon integration, AUTH_SECRET
-pnpm seed                    # create tables and load scripts/data/drinks.json (idempotent)
+pnpm db:migrate              # create/update tables (drizzle/ migrations)
+pnpm seed                    # load scripts/data/drinks.json (idempotent)
 pnpm dev
 ```
+
+## Database changes
+
+The schema lives in `app/lib/db/schema.ts`. After changing it:
+
+```bash
+pnpm db:generate   # writes a new SQL migration to drizzle/
+pnpm db:migrate    # applies pending migrations to the database in .env.local
+```
+
+Migrations are not run automatically on deploy: apply them to production
+before merging code that depends on them.
 
 ## Environment variables
 
