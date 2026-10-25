@@ -5,6 +5,11 @@
   "engines": {
     "node": ">=20.9.0"
   },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
