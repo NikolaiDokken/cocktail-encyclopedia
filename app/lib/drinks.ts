@@ -1,4 +1,4 @@
-import { and, asc, count, eq, exists, ilike, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, exists, or, sql } from "drizzle-orm";
 import { db } from "@/app/lib/db";
 import {
   drinkIngredient,
@@ -14,14 +14,16 @@ const ITEMS_PER_PAGE = 10;
 // An ingredient matches by name, including its sub-types (searching "whiskey"
 // finds Bourbon), or by alias. Aliases don't expand to sub-types, so the alias
 // "Bourbon or Rye Whiskey" doesn't make "bourbon" match rye drinks. LIKE
-// wildcards in the query are escaped so "%" and "_" match literally.
+// wildcards in the query are escaped so "%" and "_" match literally, and
+// accents are ignored on both sides ("creme" finds Crème de Cassis).
 function matchesQuery(query: string) {
-  const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
+  const escaped = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
+  const pattern = sql`unaccent(${escaped})`;
   return or(
-    ilike(drinks.name, pattern),
+    sql`unaccent(${drinks.name}) ilike ${pattern}`,
     sql`exists (
       with recursive matched (id) as (
-        select id from ${ingredients} where name ilike ${pattern}
+        select id from ${ingredients} where unaccent(name) ilike ${pattern}
         union
         select child.id from ${ingredients} child
         join matched on child.parent_id = matched.id
@@ -32,7 +34,7 @@ function matchesQuery(query: string) {
           di.ingredient_id in (select id from matched)
           or di.ingredient_id in (
             select ingredient_id from ${ingredientAliases}
-            where alias ilike ${pattern}
+            where unaccent(alias) ilike ${pattern}
           )
         )
     )`,

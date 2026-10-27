@@ -43,6 +43,13 @@
       "when": 1792960508949,
       "tag": "0005_ingredient_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793129405605,
+      "tag": "0006_unaccent",
+      "breakpoints": true
     }
   ]
 }
