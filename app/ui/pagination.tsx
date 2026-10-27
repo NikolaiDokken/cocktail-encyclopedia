@@ -36,7 +36,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
           return (
             <PaginationNumber
-              key={page}
+              key={`${page}-${index}`}
               href={createPageURL(page)}
               page={page}
               position={position}
@@ -121,35 +121,30 @@ function PaginationArrow({
   );
 }
 
-const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less,
-  // display all pages without any ellipsis.
+// Page numbers to show, with "..." for skipped ranges. Always shows the first
+// and last page and the current page with its neighbours, widened near the
+// ends so there are always 7 slots, e.g. for 10 pages:
+//   page 3: 1 2 3 4 5 … 10    page 6: 1 … 5 6 7 … 10    page 8: 1 … 6 7 8 9 10
+// A single skipped page is shown instead of "…".
+function generatePagination(
+  currentPage: number,
+  totalPages: number,
+): (number | "...")[] {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // If the current page is among the first 3 pages,
-  // show the first 3, an ellipsis, and the last 2 pages.
-  if (currentPage <= 3) {
-    return [1, 2, 3, "...", totalPages - 1, totalPages];
-  }
+  let start = Math.max(2, currentPage - 1);
+  let end = Math.min(totalPages - 1, currentPage + 1);
+  if (currentPage <= 3) end = 5;
+  if (currentPage >= totalPages - 2) start = totalPages - 4;
 
-  // If the current page is among the last 3 pages,
-  // show the first 2, an ellipsis, and the last 3 pages.
-  if (currentPage >= totalPages - 2) {
-    return [1, 2, "...", totalPages - 2, totalPages - 1, totalPages];
-  }
-
-  // If the current page is somewhere in the middle,
-  // show the first page, an ellipsis, the current page and its neighbors,
-  // another ellipsis, and the last page.
-  return [
-    1,
-    "...",
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-    "...",
-    totalPages,
-  ];
-};
+  const pages: (number | "...")[] = [1];
+  if (start === 3) pages.push(2);
+  else if (start > 3) pages.push("...");
+  for (let page = start; page <= end; page++) pages.push(page);
+  if (end === totalPages - 2) pages.push(totalPages - 1);
+  else if (end < totalPages - 2) pages.push("...");
+  pages.push(totalPages);
+  return pages;
+}
