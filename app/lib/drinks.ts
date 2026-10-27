@@ -1,4 +1,4 @@
-import { and, asc, count, eq, exists, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, exists, inArray, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/app/lib/db";
 import {
@@ -134,6 +134,90 @@ export async function fetchLikedDrinks(userId: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch liked drinks.");
+  }
+}
+
+// Everyone has water, so it never counts as missing and isn't offered in the
+// bar.
+const ALWAYS_IN_BAR = "Water";
+
+export type BarIngredient = {
+  id: string;
+  name: string;
+  parentId: string | null;
+  // False for groups that only exist to hold sub-types (Whiskey, Bitters):
+  // no recipe calls for them, so having one would make nothing possible.
+  selectable: boolean;
+};
+
+// Every ingredient that can go in a bar, for picking what you have.
+export async function fetchBarIngredients(): Promise<BarIngredient[]> {
+  try {
+    return await db
+      .select({
+        id: ingredients.id,
+        name: ingredients.name,
+        parentId: ingredients.parentId,
+        // Written out because a bare "id" would mean drink_ingredient.id.
+        selectable: sql<boolean>`exists (
+          select 1 from ${drinkIngredient} di
+          where di.ingredient_id = "ingredients"."id"
+        )`,
+      })
+      .from(ingredients)
+      .where(sql`${ingredients.name} <> ${ALWAYS_IN_BAR}`)
+      .orderBy(asc(ingredients.name));
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch ingredients.");
+  }
+}
+
+// Ids of every ingredient a bar can stand in for: what's in it, everything
+// those are a kind of (London Dry Gin covers recipes that ask for Gin, but not
+// the other way round), and water. Uncorrelated, so Postgres runs it once.
+// Never contains null, so it's safe with `not in`.
+function coveredBy(bar: string[]) {
+  return sql`(
+    with recursive covered (id) as (
+      select id from ${ingredients}
+      where ${inArray(ingredients.id, bar)} or name = ${ALWAYS_IN_BAR}
+      union
+      select i.parent_id from ${ingredients} i
+      join covered on covered.id = i.id
+      where i.parent_id is not null
+    )
+    select id from covered
+  )`;
+}
+
+// Drinks the bar can make, and drinks it's one ingredient short of. Optional
+// lines don't count. `missing` names the required ingredients not covered.
+export async function fetchBarDrinks(bar: string[], userId: string | null) {
+  if (bar.length === 0) {
+    return { canMake: [], oneAway: [] };
+  }
+  const missing = sql<string[]>`(
+    select coalesce(json_agg(i.name order by di.position), '[]'::json)
+    from ${drinkIngredient} di
+    join ${ingredients} i on i.id = di.ingredient_id
+    where di.drink_id = "drinks"."id"
+      and not di.optional
+      and di.ingredient_id not in ${coveredBy(bar)}
+  )`;
+  try {
+    const rows = await db
+      .select({ ...drinkColumns, liked: likedBy(userId), missing })
+      .from(drinks)
+      .where(sql`json_array_length(${missing}) <= 1`)
+      .orderBy(asc(drinks.name));
+    return {
+      canMake: rows.filter((drink) => drink.missing.length === 0),
+      oneAway: rows.filter((drink) => drink.missing.length === 1),
+    };
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch drinks for your bar.");
   }
 }
 

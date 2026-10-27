@@ -12,7 +12,8 @@ export default function DrinkRow({
   signedIn,
   returnTo,
 }: {
-  drink: Drink;
+  // `missing`: required ingredients the visitor's bar doesn't have.
+  drink: Drink & { missing?: string[] };
   signedIn: boolean;
   returnTo: string;
 }) {
@@ -38,6 +39,11 @@ export default function DrinkRow({
         <p className="mt-1 line-clamp-2 text-sm text-gray-600">
           {ingredientSummary(drink.recipe)}
         </p>
+        {drink.missing && drink.missing.length > 0 && (
+          <p className="mt-1 text-sm text-amber-700">
+            Missing: {drink.missing.join(", ")}
+          </p>
+        )}
       </div>
       <div className="relative z-10">
         <LikeDrink drinkId={drink.id} liked={drink.liked} signedIn={signedIn} />

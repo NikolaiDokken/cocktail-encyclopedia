@@ -21,6 +21,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return drink ? { title: `${drink.name} | Cocktail Encyclopedia` } : {};
 }
 
+function backLabel(back: string) {
+  if (back.startsWith("/profile")) return "My drinks";
+  if (back.startsWith("/bar")) return "My bar";
+  return "Drinks";
+}
+
 export default async function DrinkPage({ params, searchParams }: Props) {
   const [{ id }, { from }, session] = await Promise.all([
     params,
@@ -44,7 +50,7 @@ export default async function DrinkPage({ params, searchParams }: Props) {
         className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900"
       >
         <ArrowLeftIcon className="w-4" />
-        {back.startsWith("/profile") ? "My drinks" : "Drinks"}
+        {backLabel(back)}
       </Link>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-12">

@@ -7,7 +7,7 @@ export default function DrinksList({
   returnTo,
   emptyMessage = "No drinks found.",
 }: {
-  drinks: Drink[];
+  drinks: (Drink & { missing?: string[] })[];
   signedIn: boolean;
   // Where "back" on a drink's page should lead, e.g. the current search.
   returnTo: string;
