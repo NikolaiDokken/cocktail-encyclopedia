@@ -145,6 +145,8 @@ export type BarIngredient = {
   id: string;
   name: string;
   parentId: string | null;
+  // Brand and other names it's also known by (Disaronno for Amaretto).
+  aliases: string[];
   // False for groups that only exist to hold sub-types (Whiskey, Bitters):
   // no recipe calls for them, so having one would make nothing possible.
   selectable: boolean;
@@ -158,7 +160,13 @@ export async function fetchBarIngredients(): Promise<BarIngredient[]> {
         id: ingredients.id,
         name: ingredients.name,
         parentId: ingredients.parentId,
-        // Written out because a bare "id" would mean drink_ingredient.id.
+        // "ingredients"."id" is written out because a bare "id" would mean
+        // the subquery's own table.
+        aliases: sql<string[]>`(
+          select coalesce(json_agg(a.alias order by a.alias), '[]'::json)
+          from ${ingredientAliases} a
+          where a.ingredient_id = "ingredients"."id"
+        )`,
         selectable: sql<boolean>`exists (
           select 1 from ${drinkIngredient} di
           where di.ingredient_id = "ingredients"."id"

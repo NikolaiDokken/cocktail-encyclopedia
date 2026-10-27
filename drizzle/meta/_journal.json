@@ -57,6 +57,13 @@
       "when": 1793131063824,
       "tag": "0007_drink_pictures",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793133189957,
+      "tag": "0008_brand_aliases",
+      "breakpoints": true
     }
   ]
 }

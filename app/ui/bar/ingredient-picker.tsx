@@ -78,8 +78,15 @@ export default function IngredientPicker({
 
   const { families, singles, selectable } = groupIngredients(ingredients);
   const term = normalize(filter.trim());
+  // Brand names the filter found the ingredient by, if not by its own name
+  // ("disaronno" shows Amaretto).
+  const matchedAliases = (ingredient: BarIngredient) =>
+    term && !normalize(ingredient.name).includes(term)
+      ? ingredient.aliases.filter((alias) => normalize(alias).includes(term))
+      : [];
   const matches = (ingredient: BarIngredient) =>
-    normalize(ingredient.name).includes(term);
+    normalize(ingredient.name).includes(term) ||
+    matchedAliases(ingredient).length > 0;
   const visibleFamilies = families
     .map((family) => ({
       ...family,
@@ -114,6 +121,7 @@ export default function IngredientPicker({
 
   const chip = (ingredient: BarIngredient) => {
     const inBar = bar.has(ingredient.id);
+    const aliases = matchedAliases(ingredient);
     return (
       <li key={ingredient.id}>
         <button
@@ -128,6 +136,12 @@ export default function IngredientPicker({
           )}
         >
           {ingredient.name}
+          {aliases.length > 0 && (
+            <span className={inBar ? "text-blue-100" : "text-gray-500"}>
+              {" "}
+              · {aliases.join(", ")}
+            </span>
+          )}
         </button>
       </li>
     );
@@ -168,7 +182,7 @@ export default function IngredientPicker({
           type="search"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="Filter ingredients..."
+          placeholder="Filter by ingredient or brand..."
           className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm placeholder:text-gray-500"
         />
         <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
