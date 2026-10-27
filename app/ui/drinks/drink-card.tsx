@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Drink } from "@/app/lib/drinks";
 import { LikeDrink } from "@/app/ui/drinks/buttons";
+import Recipe from "@/app/ui/drinks/recipe";
 
 export default function DrinkCard({
   drink,
@@ -32,6 +33,7 @@ export default function DrinkCard({
               </span>
             )}
           </div>
+          <Recipe lines={drink.recipe} />
           <p className="text-base text-gray-700">{drink.instructions}</p>
           {drink.garnish && (
             <p className="mt-2 text-sm text-gray-500">

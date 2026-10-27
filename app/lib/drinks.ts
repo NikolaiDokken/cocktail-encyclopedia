@@ -52,6 +52,30 @@ function likedBy(userId: string | null) {
   ).mapWith(Boolean);
 }
 
+export type RecipeLine = {
+  name: string;
+  amount: string;
+  unit: string;
+  optional: boolean;
+};
+
+// The drink's ingredients in recipe order, fetched in the same query.
+// "drinks"."id" is written out because Drizzle leaves columns in a
+// single-table select unqualified, which would be ambiguous here.
+const recipe = sql<RecipeLine[]>`(
+  select coalesce(
+    json_agg(
+      json_build_object(
+        'name', i.name, 'amount', di.amount, 'unit', di.unit, 'optional', di.optional
+      ) order by di.position
+    ),
+    '[]'::json
+  )
+  from ${drinkIngredient} di
+  join ${ingredients} i on i.id = di.ingredient_id
+  where di.drink_id = "drinks"."id"
+)`;
+
 const drinkColumns = {
   id: drinks.id,
   name: drinks.name,
@@ -59,6 +83,7 @@ const drinkColumns = {
   instructions: drinks.instructions,
   garnish: drinks.garnish,
   imageUrl: drinks.imageUrl,
+  recipe,
 };
 
 export async function fetchFilteredDrinks(
