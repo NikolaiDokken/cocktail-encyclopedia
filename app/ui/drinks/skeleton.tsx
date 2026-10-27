@@ -4,7 +4,10 @@ const shimmer =
 
 function DrinkRowSkeleton() {
   return (
-    <li className={`${shimmer} relative flex gap-4 overflow-hidden px-3 py-4`}>
+    <li
+      className={`${shimmer} relative flex items-center gap-4 overflow-hidden px-3 py-4`}
+    >
+      <div className="size-14 shrink-0 rounded-md bg-gray-100" />
       <div className="flex flex-1 flex-col gap-2">
         <div className="h-6 w-40 rounded-sm bg-gray-100" />
         <div className="h-4 w-2/3 rounded-sm bg-gray-100" />

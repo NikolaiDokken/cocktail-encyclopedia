@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Drink } from "@/app/lib/drinks";
 import { LikeDrink } from "@/app/ui/drinks/buttons";
+import DrinkImage from "@/app/ui/drinks/drink-image";
 import { ingredientSummary } from "@/app/ui/drinks/recipe";
 import { lusitana } from "@/app/ui/fonts";
 
@@ -18,7 +19,8 @@ export default function DrinkRow({
   const href = `/drinks/${drink.id}?from=${encodeURIComponent(returnTo)}`;
 
   return (
-    <li className="relative flex items-start gap-4 px-3 py-4 hover:bg-gray-50 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-blue-500">
+    <li className="relative flex items-center gap-4 px-3 py-4 hover:bg-gray-50 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-blue-500">
+      <DrinkImage src={drink.imageUrl} sizes="56px" className="size-14" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-col gap-x-4 gap-y-0.5 sm:flex-row sm:items-baseline sm:justify-between">
           <h2 className={`${lusitana.className} text-xl text-gray-900`}>
