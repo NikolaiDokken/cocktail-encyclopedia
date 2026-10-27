@@ -20,6 +20,7 @@ export default async function Page() {
       <DrinksList
         drinks={drinks}
         signedIn
+        returnTo="/profile"
         emptyMessage="You haven't liked any drinks yet."
       />
     </div>

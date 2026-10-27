@@ -1,4 +1,5 @@
 import { and, asc, count, eq, exists, or, sql } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/app/lib/db";
 import {
   drinkIngredient,
@@ -132,6 +133,23 @@ export async function fetchLikedDrinks(userId: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch liked drinks.");
+  }
+}
+
+// One drink with its recipe, or null if the id doesn't exist.
+export async function fetchDrink(id: string, userId: string | null) {
+  if (!z.string().uuid().safeParse(id).success) {
+    return null;
+  }
+  try {
+    const [drink] = await db
+      .select({ ...drinkColumns, liked: likedBy(userId) })
+      .from(drinks)
+      .where(eq(drinks.id, id));
+    return drink ?? null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch drink.");
   }
 }
 

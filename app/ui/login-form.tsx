@@ -10,12 +10,13 @@ import { Button } from "./button";
 import { useFormSubmit } from "./use-form-submit";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { authClient, safeCallbackUrl } from "@/app/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
+import { safePath } from "@/app/lib/safe-path";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
+  const callbackUrl = safePath(searchParams.get("callbackUrl"));
 
   const { errorMessage, onSubmit, isPending } = useFormSubmit(
     async (formData) => {

@@ -1,13 +1,16 @@
 import type { Drink } from "@/app/lib/drinks";
-import DrinkCard from "@/app/ui/drinks/drink-card";
+import DrinkRow from "@/app/ui/drinks/drink-row";
 
 export default function DrinksList({
   drinks,
   signedIn,
+  returnTo,
   emptyMessage = "No drinks found.",
 }: {
   drinks: Drink[];
   signedIn: boolean;
+  // Where "back" on a drink's page should lead, e.g. the current search.
+  returnTo: string;
   emptyMessage?: string;
 }) {
   if (drinks.length === 0) {
@@ -15,10 +18,15 @@ export default function DrinksList({
   }
 
   return (
-    <div className="mt-6 space-y-4">
+    <ul className="mt-6 divide-y divide-gray-200 border-y border-gray-200">
       {drinks.map((drink) => (
-        <DrinkCard key={drink.id} drink={drink} signedIn={signedIn} />
+        <DrinkRow
+          key={drink.id}
+          drink={drink}
+          signedIn={signedIn}
+          returnTo={returnTo}
+        />
       ))}
-    </div>
+    </ul>
   );
 }

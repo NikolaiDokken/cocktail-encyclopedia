@@ -36,4 +36,5 @@ export async function toggleLike(
 
   revalidatePath("/");
   revalidatePath("/profile");
+  revalidatePath(`/drinks/${drinkId}`);
 }
