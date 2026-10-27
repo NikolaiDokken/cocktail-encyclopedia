@@ -50,6 +50,13 @@
       "when": 1793129405605,
       "tag": "0006_unaccent",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793131063824,
+      "tag": "0007_drink_pictures",
+      "breakpoints": true
     }
   ]
 }

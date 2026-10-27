@@ -48,19 +48,34 @@ export default async function DrinkPage({ params, searchParams }: Props) {
       </Link>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-12">
-        <DrinkImage
-          src={drink.imageUrl}
-          alt={drink.name}
-          sizes="(min-width: 1024px) 272px, 224px"
-          priority
-          // On phones, keep the recipe near the top: smaller picture, and no
-          // empty placeholder.
+        {/* On phones, keep the recipe near the top: smaller picture, and
+            no empty placeholder. */}
+        <figure
           className={
-            drink.imageUrl
-              ? "w-full max-w-56 lg:max-w-none"
-              : "hidden w-full lg:block"
+            drink.imageUrl ? "w-full max-w-56 lg:max-w-none" : "hidden lg:block"
           }
-        />
+        >
+          <DrinkImage
+            src={drink.imageUrl}
+            alt={drink.name}
+            sizes="(min-width: 1024px) 272px, 224px"
+            priority
+            className="w-full"
+          />
+          {drink.imageSourceUrl && (
+            <figcaption className="mt-2 text-xs text-gray-500">
+              Photo:{" "}
+              <a
+                href={drink.imageSourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-700"
+              >
+                {new URL(drink.imageSourceUrl).hostname.replace(/^www\./, "")}
+              </a>
+            </figcaption>
+          )}
+        </figure>
 
         <div className="min-w-0">
           <header className="flex flex-wrap items-start justify-between gap-4">

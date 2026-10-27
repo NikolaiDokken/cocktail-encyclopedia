@@ -86,6 +86,7 @@ const drinkColumns = {
   instructions: drinks.instructions,
   garnish: drinks.garnish,
   imageUrl: drinks.imageUrl,
+  imageSourceUrl: drinks.imageSourceUrl,
   recipe,
 };
 

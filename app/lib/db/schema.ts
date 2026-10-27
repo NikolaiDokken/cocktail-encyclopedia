@@ -127,6 +127,8 @@ export const drinks = pgTable(
     instructions: text(),
     garnish: text(),
     imageUrl: varchar("image_url", { length: 2083 }),
+    // Page the picture comes from, linked as its credit.
+    imageSourceUrl: text("image_source_url"),
   },
   (table) => [unique("drinks_name_key").on(table.name)],
 );

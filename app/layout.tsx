@@ -21,8 +21,19 @@ export default function RootLayout({
           <div className="w-full flex-none md:w-64">
             <SideNav />
           </div>
-          <div className="relative grow p-6 md:overflow-y-auto md:p-12">
-            {children}
+          <div className="relative flex grow flex-col p-6 md:overflow-y-auto md:p-12">
+            <div className="grow">{children}</div>
+            <footer className="mt-16 text-xs text-gray-500">
+              Drink photos from{" "}
+              <a
+                href="https://www.thecocktaildb.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-700"
+              >
+                TheCocktailDB
+              </a>
+            </footer>
           </div>
         </div>
       </body>
