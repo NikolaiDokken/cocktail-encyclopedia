@@ -4,6 +4,8 @@ import type { RecipeLine } from "@/app/lib/drinks";
 const instructionUnits: Record<string, string> = {
   "top up": "Top up",
   "fill up": "Fill up",
+  "to taste": "To taste",
+  rim: "Rim",
 };
 
 const plurals: Record<string, string> = {
@@ -14,6 +16,19 @@ const plurals: Record<string, string> = {
   "bar spoon": "bar spoons",
   teaspoon: "teaspoons",
   tablespoon: "tablespoons",
+  part: "parts",
+  cup: "cups",
+  slice: "slices",
+  wedge: "wedges",
+  sprig: "sprigs",
+  drop: "drops",
+  chunk: "chunks",
+  cube: "cubes",
+  scoop: "scoops",
+  can: "cans",
+  leaf: "leaves",
+  squeeze: "squeezes",
+  glass: "glasses",
 };
 
 // "30 ml", "2 dashes", "Top up", or just "1" for pieces ("1 Lime").
@@ -24,7 +39,8 @@ export function formatMeasure({ amount, unit }: RecipeLine) {
   if (unit === "piece") {
     return amount;
   }
-  const isOne = amount === "1" || amount === "1/2" || amount === "1/4";
+  // One or a fraction of one: "1 dash", "3/4 glass".
+  const isOne = /^(1|\d+\/\d+)$/.test(amount);
   return `${amount} ${isOne ? unit : (plurals[unit] ?? unit)}`;
 }
 

@@ -64,6 +64,13 @@
       "when": 1793133189957,
       "tag": "0008_brand_aliases",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793134027336,
+      "tag": "0009_cocktaildb_drinks",
+      "breakpoints": true
     }
   ]
 }

@@ -4,8 +4,9 @@ import { cookies } from "next/headers";
 // without an account.
 const BAR_COOKIE = "bar";
 
-// More than there are ingredients today, and still under the 4 KB cookie limit
-// (150 ids take 3,200 characters).
+// Far more than a home bar holds, and still under the 4 KB cookie limit (150
+// ids take 3,200 characters). There are more ingredients than this, so
+// picking every one isn't possible.
 export const MAX_BAR_SIZE = 150;
 
 // Ids are packed as their 16 raw bytes in base64url, about 21 characters each
